@@ -126,6 +126,20 @@ summary{cursor:pointer;font-weight:600}
 .nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 20px;font-weight:600}
 .nav a{color:var(--accent);text-decoration:none}
 .nav a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+#liveBox{position:fixed;top:10px;right:12px;z-index:5;display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-size:.78rem;line-height:1.2;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+#liveBox div{display:flex;flex-direction:column;align-items:center;min-width:54px}
+#liveBox span{color:var(--muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.03em}
+#liveBox b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+#liveBox .tot{border-left:1px solid var(--line);padding-left:12px}
+#liveBox .tot b{color:var(--accent)}
+@media (max-width:1280px){#liveBox{position:static;margin:0 0 12px auto;width:fit-content;max-width:100%;flex-wrap:wrap}}
+@media print{#liveBox{display:none!important}}
+.opts{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px 12px;margin:0;min-width:0}
+.opts legend{font-weight:600;padding:0 6px}
+.opts label.opt{display:flex;align-items:center;gap:12px;font-weight:400;margin:0;padding:9px 0;cursor:pointer}
+.opts input[type=checkbox]{width:24px;height:24px;flex:none;margin:0;padding:0;accent-color:var(--accent)}
+.opts input[type=text]{margin-top:4px}
+.opts[aria-invalid="true"]{border-color:var(--err)}
 body[data-page="home"] #formView{display:none}
 #homeView{display:none;max-width:560px}
 body[data-page="home"] #homeView{display:block}
@@ -195,6 +209,12 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
     <a href="#admin" data-p="admin">Staff tools</a>
     <a href="#" id="signOut">Sign out</a>
   </nav>
+  <div id="liveBox" role="status" aria-label="Live counts" title="Pre-registered and Online show checked in / total. Total in = everyone with a badge.">
+    <div><span>Pre-registered</span><b id="lc-pre">0/0</b></div>
+    <div><span>Walk-in</span><b id="lc-walk">0</b></div>
+    <div><span>Online</span><b id="lc-online">0/0</b></div>
+    <div class="tot"><span>Total in</span><b id="lc-total">0</b></div>
+  </div>
   <section id="homeView">
     <header class="brand" id="homeBrand" hidden><img id="homeLogo" alt="Logo"></header>
     <h1 id="homeTitle">Registration Portal</h1>
@@ -220,6 +240,18 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
       <div class="field"><label for="phone">Phone <small>(optional)</small></label><input id="phone" type="tel" inputmode="tel" autocomplete="tel"><p class="err" id="e-phone"></p></div>
       <div class="field"><label for="company">Company name</label><input id="company" autocomplete="organization"><p class="err" id="e-company"></p></div>
       <div class="field"><label for="designation">Designation</label><input id="designation" autocomplete="organization-title"><p class="err" id="e-designation"></p></div>
+      <div class="field">
+        <fieldset class="opts" id="heard" tabindex="-1">
+          <legend>How did you hear about this exhibition?</legend>
+          <label class="opt"><input type="checkbox" name="heard" value="Social media"> Social media</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Invitation"> Invitation</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Posters"> Posters</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Friend or colleague"> Friend or colleague</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Other" id="heardOther"> Other</label>
+          <input id="heardOtherText" type="text" maxlength="100" placeholder="Please tell us where" hidden>
+        </fieldset>
+        <p class="err" id="e-heard"></p>
+      </div>
       <p class="err" id="e-form" role="alert"></p>
       <button class="primary" id="submitBtn" type="button">Register</button>
     </div>
@@ -751,15 +783,19 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
   });
 
   // ---- Talking to Firebase (through API, defined in the module script above) ----
-  var pendingN = 0;
+  var pendingN = 0, walkinOnly = 0, onlineChecked = 0;
   function refreshStatus(){
     return API.status().then(function(d){
       serverCount = d.count; walkins = d.walkins || 0; preTotal = d.preTotal || 0; preAttended = d.preAttended || 0;
-      onlineTotal = d.online || 0; pendingN = d.pending || 0; online = !d.offline; renderCount();
+      onlineTotal = d.online || 0; walkinOnly = d.walkinOnly || 0; onlineChecked = d.onlineChecked || 0; pendingN = d.pending || 0; online = !d.offline; renderCount();
     }).catch(function(){ online = false; renderCount(); });
   }
   function renderCount(){
     $("csvBtn").textContent = "Download CSV (" + serverCount + ")";
+    $("lc-pre").textContent = preAttended + "/" + preTotal;
+    $("lc-walk").textContent = walkinOnly;
+    $("lc-online").textContent = onlineChecked + "/" + onlineTotal;
+    $("lc-total").textContent = preAttended + walkinOnly + onlineChecked;
     $("preEmpty").hidden = !!(preTotal || onlineTotal);
     $("preInfo").textContent = preTotal ? "Pre-registered list: " + preTotal + " people, " + preAttended + " checked in." : "No pre-registered list uploaded yet.";
     var msg = !online ? "No internet. Registrations are kept on this device and upload by themselves when the internet is back. Keep this page open."
@@ -772,16 +808,27 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
     $("e-" + id).textContent = msg || "";
     var input = $(id); if (input) input.setAttribute("aria-invalid", msg ? "true" : "false");
   }
+  function heardValue(){
+    var out = [];
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="heard"]:checked'), function(c){
+      if (c.value === "Other") { var t = $("heardOtherText").value.trim(); out.push(t ? "Other: " + t : "Other"); }
+      else out.push(c.value);
+    });
+    return out.join("; ");
+  }
+  $("heardOther").addEventListener("change", function(){ $("heardOtherText").hidden = !this.checked; if (this.checked) $("heardOtherText").focus(); });
   function validate(v){
     var ok = true, first = null;
     function bad(f, m){ setErr(f, m); if (!first) first = f; ok = false; }
-    FIELDS.forEach(function(f){ setErr(f, ""); });
+    FIELDS.forEach(function(f){ setErr(f, ""); }); setErr("heard", "");
     if (!v.name) bad("name", "Enter your full name.");
     if (!v.email) bad("email", "Enter your email address.");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) bad("email", "Enter a valid email, like name@company.com.");
     if (v.phone && !/^[+\d][\d\s\-()]{5,}$/.test(v.phone)) bad("phone", "Enter a valid phone number, or leave it blank.");
     if (!v.company) bad("company", "Enter your company name.");
     if (!v.designation) bad("designation", "Enter your designation.");
+    if (!v.heard) bad("heard", "Please tick at least one option.");
+    else if ($("heardOther").checked && !$("heardOtherText").value.trim()) bad("heard", "Please enter where they heard about us.");
     if (first) $(first).focus();
     return ok;
   }
@@ -789,6 +836,7 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
     $("e-form").textContent = "";
     var v = {};
     FIELDS.forEach(function(f){ v[f] = $(f).value.trim(); });
+    v.heard = heardValue();
     if (!validate(v)) return;
     var btn = $("submitBtn"); btn.disabled = true; btn.textContent = "Registering...";
     API.register(v)
@@ -865,6 +913,8 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
   function reset(){
     stopCountdown();
     FIELDS.forEach(function(f){ $(f).value = ""; setErr(f, ""); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="heard"]'), function(c){ c.checked = false; });
+    $("heardOtherText").value = ""; $("heardOtherText").hidden = true; setErr("heard", "");
     $("preName").value = ""; $("preCompany").value = ""; $("preResults").textContent = ""; $("preNote").textContent = "";
     $("doneView").hidden = true; $("formView").hidden = false;
     (PAGE === "preregistered" || (PAGE !== "register" && preTotal) ? $("preName") : $("name")).focus();
@@ -1179,10 +1229,10 @@ function preIdOf(r){ return r.email ? r.email.toLowerCase().replace(/\//g, "_") 
 
 var IMPL = {
   status: function(){
-    var att = 0, onl = 0;
+    var att = 0, onl = 0, onlIn = 0, walk = 0;
     PRE.forEach(function(p){ if (p.checkedAt) att++; });
-    REG.forEach(function(r){ if (r.source === "Online") onl++; });
-    return { count: REG.size + att, walkins: REG.size, preTotal: PRE.size, preAttended: att, online: onl,
+    REG.forEach(function(r){ if (r.source === "Online") { onl++; if (r.checkedAt) onlIn++; } else walk++; });
+    return { count: REG.size + att, walkins: REG.size, walkinOnly: walk, preTotal: PRE.size, preAttended: att, online: onl, onlineChecked: onlIn,
              pending: regPend + prePend, offline: !navigator.onLine };
   },
   onChange: function(cb){ listeners.push(cb); },
@@ -1201,7 +1251,7 @@ var IMPL = {
     if (pre) return reply(409, { error: "You are on the pre-registered list. Please use the Pre-registered check-in page.", field: "email" });
     try {
       var r = await withTimeout(F.setDoc(F.doc(db, "registrations", id), {
-        name: name, email: email, phone: phone, company: company, designation: designation, heard: "",
+        name: name, email: email, phone: phone, company: company, designation: designation, heard: clean(v.heard, 300),
         source: "Walk-in", checkedInAt: null, createdAt: F.serverTimestamp() }), 6000);
       return reply(200, { ok: true, pending: r === "pending" });
     } catch (e) {
