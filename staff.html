@@ -132,6 +132,7 @@ summary{cursor:pointer;font-weight:600}
 #liveBox b{font-size:1.05rem;font-variant-numeric:tabular-nums}
 #liveBox .tot{border-left:1px solid var(--line);padding-left:12px}
 #liveBox .tot b{color:var(--accent)}
+#liveBox small{color:var(--muted);font-size:.68rem}
 @media (max-width:1280px){#liveBox{position:static;margin:0 0 12px auto;width:fit-content;max-width:100%;flex-wrap:wrap}}
 @media print{#liveBox{display:none!important}}
 .opts{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px 12px;margin:0;min-width:0}
@@ -209,11 +210,11 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
     <a href="#admin" data-p="admin">Staff tools</a>
     <a href="#" id="signOut">Sign out</a>
   </nav>
-  <div id="liveBox" role="status" aria-label="Live counts" title="Pre-registered and Online show checked in / total. Total in = everyone with a badge.">
-    <div><span>Pre-registered</span><b id="lc-pre">0/0</b></div>
+  <div id="liveBox" role="status" aria-label="Live counts" title="People who have arrived and got a badge. Online counts only those checked in at the desk.">
+    <div><span>Pre-registered</span><b id="lc-pre">0</b></div>
     <div><span>Walk-in</span><b id="lc-walk">0</b></div>
-    <div><span>Online</span><b id="lc-online">0/0</b></div>
-    <div class="tot"><span>Total in</span><b id="lc-total">0</b></div>
+    <div><span>Online</span><b id="lc-online">0</b></div>
+    <div class="tot"><span>Total</span><b id="lc-total">0</b></div>
   </div>
   <section id="homeView">
     <header class="brand" id="homeBrand" hidden><img id="homeLogo" alt="Logo"></header>
@@ -792,9 +793,9 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
   }
   function renderCount(){
     $("csvBtn").textContent = "Download CSV (" + serverCount + ")";
-    $("lc-pre").textContent = preAttended + "/" + preTotal;
+    $("lc-pre").textContent = preAttended;
     $("lc-walk").textContent = walkinOnly;
-    $("lc-online").textContent = onlineChecked + "/" + onlineTotal;
+    $("lc-online").textContent = onlineChecked;
     $("lc-total").textContent = preAttended + walkinOnly + onlineChecked;
     $("preEmpty").hidden = !!(preTotal || onlineTotal);
     $("preInfo").textContent = preTotal ? "Pre-registered list: " + preTotal + " people, " + preAttended + " checked in." : "No pre-registered list uploaded yet.";
