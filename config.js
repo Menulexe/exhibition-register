@@ -8,5 +8,5 @@ window.PORTAL_CONFIG = {
 
   eventName: "Exhibition Registration Portal",
 
-  staffToolsCode: "1234"
+  staffToolsCode: "menul09kodisinghe12"
 };
