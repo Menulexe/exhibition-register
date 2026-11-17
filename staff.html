@@ -32,7 +32,7 @@
 <title>Staff - Registration Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 /* ---- Colours: change --accent to match your brand ---- */
 :root{--bg:#F6F5F1;--card:#fff;--ink:#1C2B2A;--muted:#5E6B69;--line:#DDE2DC;--accent:#0F766E;--accent-ink:#fff;--err:#B42318;--field:#fff;--brand:#0F766E;--brown:#46605C;
@@ -189,6 +189,126 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
 }
 </style>
 <!-- Print margin / page size are written into this tag by the script -->
+<style id="theme">
+/* ===== Visitor Desk look (warm paper, orange accent, hanging badge) =====
+   Wrapped in @media screen so printing is never affected. */
+@media screen{
+html:root:not([x]){--bg:#f4f0e8;--card:#fffdf9;--ink:#17161a;--ink-2:#4a4750;--ink-3:#8a8590;--muted:#6b6672;--line:#ddd5c6;--accent:#ff4a1c;--accent-ink:#fff;--accent-soft:#ffe3d8;--err:#c4291c;--field:#fffdf9;--brand:#ff4a1c;--brown:#4a4750;--paper-2:#ebe5d9;--ok:#1f8a5b;--ok-soft:#dcf2e6;--warn:#b26b00;--warn-soft:#fdf0d6;--shadow:0 1px 0 rgba(23,22,26,.04),0 12px 32px -16px rgba(23,22,26,.25);--display:'Bricolage Grotesque',system-ui,sans-serif;--body:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main{position:relative;z-index:1}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;line-height:1.05}
+h1{font-weight:800;font-size:clamp(2.3rem,5.2vw,3.8rem);margin:0 0 .6rem}
+.lead{font-size:1.1rem;color:var(--ink-2);max-width:46ch;margin:0 0 1.6rem}
+.lead strong{color:var(--ink)}
+.hint{color:var(--muted)}
+.err{color:var(--err)}
+
+/* eyebrow above titles */
+.eyebrow-h::before{content:attr(data-eyebrow);display:block;font:600 .8rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(1.2rem,3vw,1.75rem);box-shadow:var(--shadow)}
+.card-title{font:800 1.35rem/1.1 var(--display);margin:0 0 .8rem}
+
+/* fields */
+.field>label,legend,.panel>div>label:first-child{font:600 .78rem/1.2 var(--body);text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);margin-bottom:.4rem}
+label small{text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink-3)}
+input:not([type=checkbox]):not([type=range]):not([type=file]),select{height:auto;font:500 1.05rem/1.3 var(--body);color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:12px;padding:.8em .95em;transition:border-color .15s,box-shadow .15s}
+.panel input:not([type=checkbox]):not([type=range]):not([type=file]),.panel select{padding:.6em .8em;font-size:.95rem;height:auto}
+input[type=file]{border:1.5px dashed var(--line);border-radius:12px;background:var(--field);font:500 .9rem var(--body)}
+input:focus,select:focus,input:focus-visible,select:focus-visible{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px var(--accent-soft)}
+input[aria-invalid="true"]{border-color:var(--err)}
+input[type=checkbox]{accent-color:var(--accent)}
+.opts{border:1.5px solid var(--line);border-radius:14px;background:var(--field);padding:.6rem 1rem .8rem}
+.opts legend{padding:0 .4rem}
+.opts label.opt{font:500 1rem var(--body);text-transform:none;letter-spacing:0;color:var(--ink);padding:.6em 0}
+.opts input[type=checkbox]{accent-color:var(--accent)}
+
+/* buttons: pill with offset shadow */
+button{height:auto;font:600 .95rem/1 var(--body);padding:.85em 1.3em;border-radius:999px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);box-shadow:0 2px 0 var(--ink);transition:transform .12s ease,box-shadow .12s ease,background .15s}
+button:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 3px 0 var(--ink)}
+button:active:not(:disabled){transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.55;cursor:wait}
+.primary,#submitBtn{background:var(--accent);color:var(--accent-ink);font-size:1.05rem;padding:1em 1.4em}
+.ghost{background:var(--card);color:var(--ink);border-color:var(--ink);height:auto}
+.danger-btn{color:var(--err);border-color:var(--err);box-shadow:0 2px 0 var(--err)}
+
+#testTag{position:fixed;right:12px;bottom:12px;z-index:50;background:var(--ink);color:var(--bg);font:600 .72rem/1 var(--mono);letter-spacing:.06em;padding:.7em 1em;border-radius:999px;box-shadow:0 6px 18px -6px rgba(0,0,0,.5)}
+#testTag b{color:var(--accent)}
+}
+
+@media screen{
+main{max-width:900px;width:100%;margin:0 auto;padding:clamp(1.25rem,3vw,2.5rem) clamp(1.25rem,4vw,4rem) 4rem}
+#doneView{max-width:560px;margin:0 auto}
+
+/* nav = segmented pill bar */
+.nav{display:flex;flex-wrap:wrap;gap:2px;background:var(--paper-2);padding:4px;border-radius:26px;width:fit-content;max-width:100%;margin:0 0 1.1rem}
+.nav a{font:600 .88rem/1 var(--body);color:var(--ink-2);padding:.7em 1em;border-radius:999px;text-decoration:none}
+.nav a:hover{background:rgba(23,22,26,.06)}
+.nav a[aria-current="page"]{background:var(--ink);color:var(--bg);text-decoration:none}
+
+/* live counter = stat cards */
+#liveBox{position:static;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;background:none;border:0;box-shadow:none;padding:0;margin:0 0 1.6rem;width:auto;max-width:640px;font-size:1rem}
+#liveBox div{align-items:flex-start;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.8rem 1rem;gap:.35rem;box-shadow:none}
+#liveBox span{font:600 .66rem/1.1 var(--body);letter-spacing:.1em;color:var(--ink-3)}
+#liveBox b{font:800 2.1rem/1 var(--display);letter-spacing:-.03em}
+#liveBox .tot{background:var(--ink);border-color:var(--ink);padding-left:1rem;border-left:1px solid var(--ink)}
+#liveBox .tot span{color:#cfc8bb}
+#liveBox .tot b{color:var(--accent)}
+@media (max-width:520px){#liveBox{grid-template-columns:repeat(2,1fr)}}
+
+/* headings */
+#homeView h1,#formView h1{max-width:14ch}
+#codeGate{max-width:420px;border:1.5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:2rem;display:grid;gap:.4rem}
+#codeGate h2{font:800 2rem/1.05 var(--display)}
+
+/* home menu */
+a.menu{display:block;position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:1.1rem 3.2rem 1.1rem 1.3rem;margin-bottom:.9rem;font:800 1.25rem/1.15 var(--display);letter-spacing:-.02em;transition:transform .12s,box-shadow .12s}
+a.menu span{font:400 .95rem/1.4 var(--body);letter-spacing:0;color:var(--muted);margin-top:.3rem}
+a.menu::after{content:"\2192";position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font:700 1.4rem var(--body);color:var(--accent)}
+a.menu:hover,a.menu:focus-visible{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 6px 0 var(--ink)}
+a.menu:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* results / feed rows */
+.res{border-top:1px solid var(--line);padding:.9rem .4rem;border-radius:10px;transition:background .12s}
+.res:hover{background:#fbf7f0}
+.res strong{font-weight:700}
+.res button{height:auto;padding:.7em 1em;font-size:.82rem;background:var(--accent);color:var(--accent-ink)}
+.res button.again{background:var(--card);color:var(--ink)}
+.res.new{background:var(--accent-soft);padding-left:.6rem;padding-right:.6rem;animation:fresh 2.4s ease}
+@keyframes fresh{0%{background:var(--accent-soft)}100%{background:transparent}}
+.tag{font:600 .68rem/1 var(--body);text-transform:uppercase;letter-spacing:.08em;padding:.45em .7em;border:0;background:var(--ok-soft);color:var(--ok)}
+.tag.wait{background:var(--warn-soft);color:var(--warn);border:0}
+.feed-head .hint{font-weight:600}
+
+/* tools */
+.tools{max-width:none}
+.tools details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1rem 1.2rem;box-shadow:var(--shadow)}
+summary{font:800 1.1rem/1.2 var(--display);letter-spacing:-.01em}
+.panel{background:var(--bg);border:1px solid var(--line);border-radius:14px}
+.danger{border-top:1px solid var(--line)}
+#sheet{border-radius:10px}
+#sheet .lf{outline-color:var(--accent);background:rgba(255,74,28,.15)}
+#sheet .lf.sel{outline-color:var(--accent)}
+.row-btns button{height:auto;font-size:.85rem}
+
+/* done badge (on screen only) */
+.badge{border-radius:18px;box-shadow:var(--shadow)}
+.done .ghost{height:auto;width:100%}
+.done .primary{margin-top:0}
+
+}
+@media screen{
+#gate{max-width:480px;margin:0 auto;padding:clamp(2rem,12vh,6rem) 1.25rem;position:relative;z-index:1}
+#gate h1{font:800 clamp(2.2rem,6vw,3rem)/1.05 var(--display);letter-spacing:-.02em;margin:0 0 1.5rem}
+#gate h1::before{content:"Staff sign in";display:block;font:600 .8rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+#gate .lead{display:none}
+#gate form.card{border:1.5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:2rem}
+}
+
+</style>
 <style id="printStyle"></style>
 <style id="layoutStyle"></style>
 </head>
@@ -228,7 +348,7 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
   </section>
   <section id="homeView">
     <header class="brand" id="homeBrand" hidden><img id="homeLogo" alt="Logo"></header>
-    <h1 id="homeTitle">Registration Portal</h1>
+    <h1 class="eyebrow-h" data-eyebrow="Staff desk" id="homeTitle">Registration Portal</h1>
     <p class="lead">Choose what you want to do.</p>
     <a class="menu" href="#register">Register a walk-in visitor<span>New visitor at the desk. Prints the badge.</span></a>
     <a class="menu" href="#preregistered">Pre-registered check-in<span>Find the name, check in and print the badge.</span></a>
@@ -240,7 +360,7 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
   <div id="formView">
     <header class="brand" id="brandBar" hidden><img id="logo" alt="Logo" hidden></header>
     <p class="err" id="logoNote" hidden></p>
-    <h1 id="eventName">Visitor registration</h1>
+    <h1 class="eyebrow-h" data-eyebrow="Registration desk" id="eventName">Visitor registration</h1>
     <p class="lead" id="lead"><strong>Visitor registration.</strong> Fill in your details and we'll print your entry badge.</p>
     <div class="cols">
     <section class="col-reg">
@@ -341,7 +461,7 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
                 <select id="L-rot"><option value="0">0 (normal)</option><option value="90">90 clockwise</option><option value="180">180</option><option value="270">270 clockwise</option></select></div>
               <div><label for="L-gop">Guide image strength</label><input id="L-gop" type="range" min="0" max="1" step="0.05"></div>
             </div>
-            <p class="hint">Drag the three teal boxes onto the card, or type exact numbers below (millimetres from the top-left corner of the card).</p>
+            <p class="hint">Drag the three orange boxes onto the card, or type exact numbers below (millimetres from the top-left corner of the card).</p>
             <div id="sheet"><div id="guideImg"></div></div>
             <div id="layoutFields" style="display:grid;gap:10px"></div>
             <div>
