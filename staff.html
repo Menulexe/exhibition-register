@@ -141,6 +141,9 @@ summary{cursor:pointer;font-weight:600}
 .opts input[type=checkbox]{width:24px;height:24px;flex:none;margin:0;padding:0;accent-color:var(--accent)}
 .opts input[type=text]{margin-top:4px}
 .opts[aria-invalid="true"]{border-color:var(--err)}
+body.locked-admin #formView{display:none}
+#codeGate{max-width:360px}
+#codeGate h2{margin:0 0 4px}
 body[data-page="home"] #formView{display:none}
 #homeView{display:none;max-width:560px}
 body[data-page="home"] #homeView{display:block}
@@ -216,6 +219,13 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
     <div><span>Online</span><b id="lc-online">0</b></div>
     <div class="tot"><span>Total</span><b id="lc-total">0</b></div>
   </div>
+  <section id="codeGate" class="card" hidden>
+    <h2>Staff tools</h2>
+    <p class="hint">Enter the code to open this page.</p>
+    <div class="field"><label for="codeInput">Code</label><input id="codeInput" type="password" autocomplete="off" inputmode="text"></div>
+    <p class="err" id="codeErr" role="alert"></p>
+    <button class="primary" id="codeBtn" type="button">Open</button>
+  </section>
   <section id="homeView">
     <header class="brand" id="homeBrand" hidden><img id="homeLogo" alt="Logo"></header>
     <h1 id="homeTitle">Registration Portal</h1>
@@ -408,6 +418,8 @@ body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #t
 </main>
 
 <script>
+// EDIT HERE (code): the code needed to open "Staff tools". "" = no code.
+var STAFF_TOOLS_CODE = "1234";
 // The page talks to Firebase through API (filled in by the module script at the bottom once staff have signed in)
 window.__apiReady = new Promise(function(r){ window.__apiResolve = r; });
 window.API = {};
@@ -451,7 +463,7 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
     $("doneView").hidden = true; $("formView").hidden = false;
     $("preResults").textContent = ""; $("preNote").textContent = "";
     feedSig = "";
-    applyPage();
+    applyPage(); applyLock();
     window.scrollTo(0, 0);
     if (PAGE === "online-desk") loadFeed();
   });
@@ -461,6 +473,30 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
     "online-desk": ["Online registrations.", "People who registered on their phones appear here live. Check them in and print their badge."],
     admin: ["Staff tools.", "Download the list, upload the pre-registered list, change print settings."]
   };
+  // ---- code for Staff tools ----
+  var codeTries = 0, codeBlockedUntil = 0;
+  function codeOk(){
+    if (!STAFF_TOOLS_CODE) return true;
+    try { var t = +sessionStorage.getItem("portal_code_ok") || 0; return t && Date.now() - t < 30 * 60 * 1000; } catch (e) { return false; }
+  }
+  function applyLock(){
+    var need = PAGE === "admin" && !codeOk();
+    document.body.classList.toggle("locked-admin", need);
+    $("codeGate").hidden = !need;
+    if (need) { $("codeInput").value = ""; $("codeErr").textContent = ""; setTimeout(function(){ $("codeInput").focus(); }, 30); }
+  }
+  function tryCode(){
+    if (Date.now() < codeBlockedUntil) { $("codeErr").textContent = "Too many wrong tries. Wait a few seconds."; return; }
+    if ($("codeInput").value === STAFF_TOOLS_CODE) {
+      try { sessionStorage.setItem("portal_code_ok", String(Date.now())); } catch (e) {}
+      codeTries = 0; applyLock();
+    } else {
+      codeTries++; $("codeInput").value = "";
+      if (codeTries >= 5) { codeTries = 0; codeBlockedUntil = Date.now() + 30000; $("codeErr").textContent = "Too many wrong tries. Wait 30 seconds."; }
+      else $("codeErr").textContent = "Wrong code.";
+      $("codeInput").focus();
+    }
+  }
   function applyPage(){
     document.body.setAttribute("data-page", PAGE);
     var t = PAGE_TEXT[PAGE];
@@ -1069,7 +1105,9 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
 
   try { if (window.top !== window.self) $("previewNote").hidden = false; } catch(e){ $("previewNote").hidden = false; }
   if (location.protocol === "file:") $("serverNote").hidden = false;
-  applyPage(); syncInputs(); applySettings(); renderCount();
+  applyPage(); applyLock(); syncInputs(); applySettings(); renderCount();
+  $("codeBtn").addEventListener("click", tryCode);
+  $("codeInput").addEventListener("keydown", function(e){ if (e.key === "Enter") tryCode(); });
   refreshStatus();
   API.onChange(function(){ refreshStatus(); if (PAGE === "online-desk" && $("doneView").hidden) loadFeed(); });
   if (PAGE === "online-desk") loadFeed();
@@ -1397,7 +1435,7 @@ document.getElementById("loginForm").addEventListener("submit", function(ev){
 AU.onAuthStateChanged(auth, function(user){
   if (!user) {
     document.body.classList.remove("authed");
-    try { localStorage.removeItem("portal_staff"); } catch (e) {}
+    try { localStorage.removeItem("portal_staff"); sessionStorage.removeItem("portal_code_ok"); } catch (e) {}
     return;
   }
   if (ready) return;
@@ -1414,7 +1452,7 @@ AU.onAuthStateChanged(auth, function(user){
 });
 document.getElementById("signOut").addEventListener("click", async function(ev){
   ev.preventDefault();
-  try { localStorage.removeItem("portal_staff"); } catch (e) {}
+  try { localStorage.removeItem("portal_staff"); sessionStorage.removeItem("portal_code_ok"); } catch (e) {}
   try { await AU.signOut(auth); await F.terminate(db); await F.clearIndexedDbPersistence(db); } catch (e) {}
   location.href = location.pathname;
 });
