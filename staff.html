@@ -9,7 +9,7 @@
   1) CHANGE PRINT MARGINS
      Search for:  EDIT HERE   (it is near the bottom of the file)
      - margins   : print margins in millimetres
-     (The event name and staff code are in config.js. Logo: see "logo".)
+     (The event name is set in CONFIG just below "EDIT HERE". Logo: see "logo".)
      No-code alternative: open the page and use "Print & branding
      settings" at the bottom. Those values are saved in that browser and
      override the ones in the code (use "Reset to code defaults" to undo).
@@ -28,9 +28,6 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>try { if (localStorage.getItem("portal_theme") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
-<script src="config.js"></script>
-
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Staff - Registration Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -241,26 +238,6 @@ button:disabled{opacity:.55;cursor:wait}
 #testTag{position:fixed;right:12px;bottom:12px;z-index:50;background:var(--ink);color:var(--bg);font:600 .72rem/1 var(--mono);letter-spacing:.06em;padding:.7em 1em;border-radius:999px;box-shadow:0 6px 18px -6px rgba(0,0,0,.5)}
 #testTag b{color:var(--accent)}
 }
-@media screen{
-html:root[data-theme="dark"]:not([x]){color-scheme:dark;--bg:#141318;--card:#1d1b22;--ink:#f4f0e8;--ink-2:#cbc6d1;--ink-3:#948f9d;--muted:#a8a3b1;--line:#35323d;--accent:#ff4a1c;--accent-soft:#3b1f17;--err:#ff7a6b;--field:#17161b;--brand:#ff4a1c;--paper-2:#26242d;--ok:#4fd18f;--ok-soft:#173529;--warn:#f0a53a;--warn-soft:#3a2d12;--shadow:0 1px 0 rgba(0,0,0,.3),0 12px 32px -16px rgba(0,0,0,.7)}
-[data-theme="dark"] .nav a:hover{background:rgba(255,255,255,.08)}
-[data-theme="dark"] .res:hover{background:#25232b}
-[data-theme="dark"] #liveBox .tot{background:#0b0a0e;border-color:#4a4752}
-[data-theme="dark"] #liveBox .tot span{color:#b9b3c2}
-[data-theme="dark"] .ok,[data-theme="dark"] #codeGate,[data-theme="dark"] #gate form.card,[data-theme="dark"] a.menu{border-color:#4a4752;box-shadow:0 6px 0 #4a4752}
-[data-theme="dark"] a.menu{box-shadow:0 4px 0 #4a4752}
-[data-theme="dark"] a.menu:hover,[data-theme="dark"] a.menu:focus-visible{border-color:#4a4752;box-shadow:0 6px 0 #4a4752}
-[data-theme="dark"] button{border-color:#8f8a98;box-shadow:0 2px 0 #8f8a98}
-[data-theme="dark"] button:hover:not(:disabled){box-shadow:0 3px 0 #8f8a98}
-[data-theme="dark"] button:active:not(:disabled){box-shadow:0 0 0 #8f8a98}
-[data-theme="dark"] .primary,[data-theme="dark"] #submitBtn,[data-theme="dark"] .res button:not(.again){border-color:#ffb199;box-shadow:0 2px 0 #ffb199}
-[data-theme="dark"] .danger-btn{border-color:var(--err);box-shadow:0 2px 0 var(--err)}
-[data-theme="dark"] .nav a[aria-current="page"]{background:var(--ink);color:#17161a}
-[data-theme="dark"] input[type=file]{color:var(--ink)}
-[data-theme="dark"] .badge{box-shadow:0 12px 32px -12px rgba(0,0,0,.8)}
-#themeBtn{position:fixed;right:12px;bottom:12px;z-index:60;padding:.7em 1em;font-size:.8rem;box-shadow:0 6px 18px -6px rgba(0,0,0,.45)}
-}
-@media print{#themeBtn{display:none!important}}
 
 @media screen{
 main{max-width:900px;width:100%;margin:0 auto;padding:clamp(1.25rem,3vw,2.5rem) clamp(1.25rem,4vw,4rem) 4rem}
@@ -329,14 +306,6 @@ summary{font:800 1.1rem/1.2 var(--display);letter-spacing:-.01em}
 #gate h1::before{content:"Staff sign in";display:block;font:600 .8rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
 #gate .lead{display:none}
 #gate form.card{border:1.5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:2rem}
-}
-@media screen{
-.panel{min-width:0}
-.panel>*{min-width:0}
-.panel input,.panel select{max-width:100%;min-width:0}
-}
-@media screen{
-details::details-content{box-sizing:border-box}
 }
 
 </style>
@@ -569,8 +538,8 @@ details::details-content{box-sizing:border-box}
 </main>
 
 <script>
-// The Staff tools code is set in config.js
-var STAFF_TOOLS_CODE = (window.PORTAL_CONFIG && window.PORTAL_CONFIG.staffToolsCode !== undefined) ? String(window.PORTAL_CONFIG.staffToolsCode) : "1234";
+// EDIT HERE (code): the code needed to open "Staff tools". "" = no code.
+var STAFF_TOOLS_CODE = "1234";
 // The page talks to Firebase through API (filled in by the module script at the bottom once staff have signed in)
 window.__apiReady = new Promise(function(r){ window.__apiResolve = r; });
 window.API = {};
@@ -585,7 +554,7 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
      EDIT HERE  -  your event details and print defaults
      ===================================================================== */
   var CONFIG = {
-    eventName: (window.PORTAL_CONFIG && window.PORTAL_CONFIG.eventName) || "Exhibition Registration Portal",   // set in config.js
+    eventName: "Exhibition Registration Portal",         // EDIT HERE: the event name (shown on the pages)
     logo: "",         // "" = no logo, or "logo.png" (upload logo.png to the same GitHub folder)
     margins: { top: 10, right: 10, bottom: 10, left: 10 },  // print margins in millimetres
     pageSize: "auto",        // "auto" (printer default) | "A4" | "A5" | "A6" | "letter"
@@ -1265,11 +1234,15 @@ window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.
 })();
 </script>
 <script type="module">
-// Firebase settings come from config.js
-var firebaseConfig = (window.PORTAL_CONFIG && window.PORTAL_CONFIG.firebase) || { apiKey: "PASTE" };
+// EDIT HERE (Firebase): the same three values as in the visitor form (index.html)
+var firebaseConfig = {
+  apiKey: "AIzaSyD3bpDTcEPv6Qx9JLcbhM_NodXCJ7Yk0OY",
+  authDomain: "exhibition-registration-56156.firebaseapp.com",
+  projectId: "exhibition-registration-56156"
+};
 var gateErr = document.getElementById("gateErr");
 function gmsg(t){ gateErr.textContent = t || ""; }
-if (firebaseConfig.apiKey.indexOf("PASTE") === 0) { gmsg("The Firebase settings are not filled in yet. Open config.js in Notepad and paste your settings, then upload it to GitHub."); throw new Error("no config"); }
+if (firebaseConfig.apiKey.indexOf("PASTE") === 0) { gmsg("The Firebase settings are not filled in yet. Open staff.html in Notepad, search EDIT HERE (Firebase) and paste your settings."); throw new Error("no config"); }
 var BASE = "https://www.gstatic.com/firebasejs/10.14.1/";
 var A, AU, F;
 try {
@@ -1605,19 +1578,5 @@ document.getElementById("signOut").addEventListener("click", async function(ev){
 });
 </script>
 
-<button id="themeBtn" type="button" aria-pressed="false">&#9790; Dark mode</button>
-<script>
-(function(){
-  var b = document.getElementById("themeBtn"), root = document.documentElement;
-  function show(){ var d = root.getAttribute("data-theme") === "dark"; b.setAttribute("aria-pressed", d ? "true" : "false"); b.innerHTML = d ? "&#9728; Light mode" : "&#9790; Dark mode"; }
-  b.addEventListener("click", function(){
-    var d = root.getAttribute("data-theme") === "dark";
-    if (d) root.removeAttribute("data-theme"); else root.setAttribute("data-theme", "dark");
-    try { localStorage.setItem("portal_theme", d ? "light" : "dark"); } catch (e) {}
-    show();
-  });
-  show();
-})();
-</script>
 </body>
 </html>
