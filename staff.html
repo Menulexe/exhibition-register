@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<!--
+  ====================================================================
+  EXHIBITION VISITOR REGISTRATION  -  HOW TO EDIT THIS FILE
+  ====================================================================
+  Open this file in any browser to use it. To edit it, open it in
+  Notepad / TextEdit / VS Code.
+
+  1) CHANGE PRINT MARGINS
+     Search for:  EDIT HERE   (it is near the bottom of the file)
+     - margins   : print margins in millimetres
+     (The event name and staff code are in config.js. Logo: see "logo".)
+     No-code alternative: open the page and use "Print & branding
+     settings" at the bottom. Those values are saved in that browser and
+     override the ones in the code (use "Reset to code defaults" to undo).
+
+  2) CHANGE THE FORM TITLE / INTRO TEXT
+     Search for:  Visitor registration   (inside the <h1> tag)
+
+  3) CHANGE COLOURS
+     Search for:  --accent   (top of the <style> block)
+
+  STAFF PAGE (online edition). Staff sign in with the Firebase staff account.
+  All data lives in Firebase, so any laptop can open this page from its
+  GitHub link. Open it from the web link, not by double-clicking the file.
+  ====================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>try { if (localStorage.getItem("portal_theme") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+<script src="config.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Staff - Registration Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ---- Colours: change --accent to match your brand ---- */
+:root{--bg:#F6F5F1;--card:#fff;--ink:#1C2B2A;--muted:#5E6B69;--line:#DDE2DC;--accent:#0F766E;--accent-ink:#fff;--err:#B42318;--field:#fff;--brand:#0F766E;--brown:#46605C;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1716;--card:#12211F;--ink:#E6F2EF;--muted:#9DB3AE;--line:#233836;--accent:#5EEAD4;--accent-ink:#0C1716;--err:#FF8A7A;--field:#0C1716}}
+:root[data-theme="dark"]{--bg:#0C1716;--card:#12211F;--ink:#E6F2EF;--muted:#9DB3AE;--line:#233836;--accent:#5EEAD4;--accent-ink:#0C1716;--err:#FF8A7A;--field:#0C1716}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+main{max-width:1040px;margin:0 auto;padding:32px 20px 48px}
+#doneView{max-width:560px;margin:0 auto}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+@media (max-width:820px){.cols{grid-template-columns:1fr}.col-pre{order:-1}}
+h1{font-size:clamp(1.9rem,6vw,2.5rem);line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-.02em}
+.lead{margin:0 0 24px;color:var(--muted)}
+.brand{display:flex;align-items:center;margin-bottom:16px}
+.brand img{max-height:130px;max-width:260px;object-fit:contain;background:#fff;border-radius:8px;padding:4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+.field{margin-bottom:16px}
+label{display:block;font-weight:600;margin-bottom:6px}
+label small{font-weight:400;color:var(--muted)}
+input,select{width:100%;height:48px;padding:0 14px;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:10px}
+input[type=checkbox]{width:auto;height:auto;margin-right:8px}
+input[type=file]{height:auto;padding:10px}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input[aria-invalid="true"]{border-color:var(--err)}
+.err{color:var(--err);font-size:.9rem;margin:6px 0 0}
+.err:empty{display:none}
+button{font:inherit;font-weight:600;cursor:pointer;border-radius:10px;height:52px;padding:0 20px;border:1.5px solid transparent}
+.primary{width:100%;background:var(--accent);color:var(--accent-ink);margin-top:8px;font-size:1.05rem}
+.primary:disabled{opacity:.6;cursor:wait}
+.ghost{background:transparent;color:var(--ink);border-color:var(--line);height:44px}
+.done .primary{margin-top:0}
+.done .ghost{width:100%;height:48px}
+
+/* ---- Badge (also what gets printed) ---- */
+.badge{background:#fff;color:#1C2B2A;border-radius:20px;padding:20px 24px 24px;text-align:center;border-top:10px solid var(--brand);border-left:1px solid #DDE2DC;border-right:1px solid #DDE2DC;border-bottom:1px solid #DDE2DC}
+.slot,.b-logo,.b-event{display:none!important}
+.badge{border-top:1px solid #DDE2DC!important;padding:28px 24px!important}
+.slot{width:64px;height:10px;border-radius:6px;background:var(--bg);margin:0 auto 20px}
+.b-logo{display:block;max-height:96px;max-width:60%;object-fit:contain;margin:0 auto 8px}
+.b-event{margin:0 0 14px;font-weight:600;color:var(--brown)}
+.badge h2{font-size:clamp(1.8rem,7vw,2.6rem);line-height:1.1;margin:0 0 10px;font-weight:800;letter-spacing:-.02em;overflow-wrap:anywhere}
+.role{font-size:1.15rem;font-weight:600;margin:0}
+.org{margin:2px 0 0;color:var(--brown);font-size:1.05rem}
+.badge [contenteditable]:empty::before{content:attr(data-ph);color:#8AA09B}
+@media screen{
+  .badge [contenteditable]{border-radius:8px;outline:2px dashed transparent;outline-offset:4px;cursor:text}
+  .badge [contenteditable]:hover{outline-color:#A9C2BD}
+  .badge [contenteditable]:focus{outline:2px solid var(--brand)}
+}
+#editHint{margin:0 0 10px;text-align:center}
+.card-title{margin:0 0 12px;font-size:1.2rem;line-height:1.2}
+#preResults{margin-top:8px}
+.res{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}
+.res .who{min-width:0}
+.res strong{display:block;overflow-wrap:anywhere}
+.res span{color:var(--muted);font-size:.92rem}
+.res button{flex:none;height:44px;background:var(--accent);color:var(--accent-ink)}
+.res button.again{background:transparent;color:var(--ink);border-color:var(--line)}
+.msg{margin:20px 0 14px;text-align:center}
+.actions{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+#countdown{text-align:center;color:var(--muted);font-size:.95rem}
+
+/* ---- Online registrations page ---- */
+#onlineDesk{display:none;max-width:560px}
+body[data-page="online-desk"] #onlineDesk{display:block}
+body[data-page="online-desk"] .cols,body[data-page="online-desk"] #toolSettings,body[data-page="online-desk"] #toolUpload,body[data-page="online-desk"] body[data-page="online-desk"] #csvBtn,body[data-page="online-desk"] #csvMsg,body[data-page="online-desk"] .tools .admin-only{display:none!important}
+.feed-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+.feed-head .hint{font-size:.92rem}
+.res.new{background:rgba(15,118,110,.14);border-radius:10px;padding-left:10px;padding-right:10px}
+.res .when{display:block;font-size:.85rem}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted);margin-left:6px;vertical-align:middle}
+.tag.wait{color:var(--accent);border-color:var(--accent)}
+
+/* ---- Staff tools ---- */
+.tools{max-width:560px;margin-top:28px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.tools details{width:100%}
+summary{cursor:pointer;font-weight:600}
+.panel{margin-top:12px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:12px;display:grid;gap:14px}
+.panel input,.panel select{height:40px}
+.panel label{font-size:.92rem;margin-bottom:4px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row-btns{display:flex;flex-wrap:wrap;gap:8px}
+.row-btns button{height:40px}
+.danger{border-top:1px solid var(--line);padding-top:14px}
+.danger-btn{color:var(--err);border-color:var(--err)}
+.hint{color:var(--muted);font-size:.85rem;margin:0}
+[hidden]{display:none!important}
+.nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 20px;font-weight:600}
+.nav a{color:var(--accent);text-decoration:none}
+.nav a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+#liveBox{position:fixed;top:10px;right:12px;z-index:5;display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-size:.78rem;line-height:1.2;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+#liveBox div{display:flex;flex-direction:column;align-items:center;min-width:54px}
+#liveBox span{color:var(--muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.03em}
+#liveBox b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+#liveBox .tot{border-left:1px solid var(--line);padding-left:12px}
+#liveBox .tot b{color:var(--accent)}
+#liveBox small{color:var(--muted);font-size:.68rem}
+@media (max-width:1280px){#liveBox{position:static;margin:0 0 12px auto;width:fit-content;max-width:100%;flex-wrap:wrap}}
+@media print{#liveBox{display:none!important}}
+.opts{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px 12px;margin:0;min-width:0}
+.opts legend{font-weight:600;padding:0 6px}
+.opts label.opt{display:flex;align-items:center;gap:12px;font-weight:400;margin:0;padding:9px 0;cursor:pointer}
+.opts input[type=checkbox]{width:24px;height:24px;flex:none;margin:0;padding:0;accent-color:var(--accent)}
+.opts input[type=text]{margin-top:4px}
+.opts[aria-invalid="true"]{border-color:var(--err)}
+body.admin-mode:not(.is-admin) #nav a[data-p="admin"],body.admin-mode:not(.is-admin) a.menu[href="#admin"]{display:none!important}
+body.locked-admin #formView{display:none}
+#codeGate{max-width:360px}
+#codeGate h2{margin:0 0 4px}
+body[data-page="home"] #formView{display:none}
+#homeView{display:none;max-width:560px}
+body[data-page="home"] #homeView{display:block}
+#homeView h1{margin:0 0 4px}
+#homeView p.lead{margin-bottom:24px}
+a.menu{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;color:var(--ink);text-decoration:none;font-weight:600;font-size:1.1rem}
+a.menu span{display:block;font-weight:400;color:var(--muted);font-size:.92rem;margin-top:2px}
+a.menu:hover,a.menu:focus-visible{border-color:var(--accent);outline:none}
+#gate{max-width:420px;margin:0 auto;padding:60px 20px}
+#gate h1{font-size:1.8rem;line-height:1.15;margin:0 0 4px;font-weight:800;letter-spacing:-.02em}
+body.authed #gate{display:none}
+body:not(.authed) main{display:none}
+body[data-page="register"] .col-pre,body[data-page="preregistered"] .col-reg,body[data-page="admin"] .cols{display:none!important}
+body[data-page="register"] .cols,body[data-page="preregistered"] .cols{grid-template-columns:1fr;max-width:560px}
+body[data-page="register"] .tools .admin-only,body[data-page="preregistered"] .tools .admin-only,
+body[data-page="register"] #toolSettings,body[data-page="register"] #toolUpload,body[data-page="register"] body[data-page="register"] #csvBtn,body[data-page="register"] #csvMsg,
+body[data-page="preregistered"] #toolSettings,body[data-page="preregistered"] #toolUpload,body[data-page="preregistered"] body[data-page="preregistered"] #csvBtn,body[data-page="preregistered"] #csvMsg{display:none!important}
+
+@media (prefers-reduced-motion:no-preference){.badge{animation:pop .35s ease-out}@keyframes pop{from{transform:scale(.96);opacity:0}}}
+
+/* ---- Badge print position editor ---- */
+#gridLayer{display:none}
+#layoutBox{display:grid;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.lf-row{display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px}
+#sheet{position:relative;width:100%;border:1px solid var(--line);background:#fff;overflow:hidden;touch-action:none}
+#guideImg{position:absolute;inset:0;background-size:100% 100%;background-repeat:no-repeat;pointer-events:none}
+#sheet .lf{position:absolute;color:#000;line-height:1.15;cursor:move;user-select:none;outline:1px dashed #0F766E;background:rgba(15,118,110,.15);font-family:Inter,system-ui,sans-serif;overflow:visible}
+#sheet .lf.sel{outline:2px solid #0F766E}
+
+/* ---- Printing: only the badge is printed ---- */
+@media print{
+  html,body{background:#fff!important}
+  :root{padding:0!important}
+  main{padding:0;max-width:none;margin:0}
+  main>*:not(#doneView),#doneView>*:not(.badge){display:none!important}
+  /* Print ONLY name, designation and company: no hole, no border/colour bar, no logo, no event name */
+  .badge{animation:none;margin:0 auto;break-inside:avoid;border:0!important;border-radius:0;padding:0;box-shadow:none;background:#fff}
+  .slot,.b-logo,.b-event{display:none!important}
+  img,header,nav{display:none!important}
+  .badge>*:not(#b-name):not(#b-role):not(#b-org):not(#gridLayer){display:none!important}
+  .badge [contenteditable]{outline:none!important}
+  .badge [contenteditable]:empty::before{content:""}
+}
+</style>
+<!-- Print margin / page size are written into this tag by the script -->
+<style id="theme">
+/* ===== Visitor Desk look (warm paper, orange accent, hanging badge) =====
+   Wrapped in @media screen so printing is never affected. */
+@media screen{
+html:root:not([x]){--bg:#f4f0e8;--card:#fffdf9;--ink:#17161a;--ink-2:#4a4750;--ink-3:#8a8590;--muted:#6b6672;--line:#ddd5c6;--accent:#ff4a1c;--accent-ink:#fff;--accent-soft:#ffe3d8;--err:#c4291c;--field:#fffdf9;--brand:#ff4a1c;--brown:#4a4750;--paper-2:#ebe5d9;--ok:#1f8a5b;--ok-soft:#dcf2e6;--warn:#b26b00;--warn-soft:#fdf0d6;--shadow:0 1px 0 rgba(23,22,26,.04),0 12px 32px -16px rgba(23,22,26,.25);--display:'Bricolage Grotesque',system-ui,sans-serif;--body:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main{position:relative;z-index:1}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;line-height:1.05}
+h1{font-weight:800;font-size:clamp(2.3rem,5.2vw,3.8rem);margin:0 0 .6rem}
+.lead{font-size:1.1rem;color:var(--ink-2);max-width:46ch;margin:0 0 1.6rem}
+.lead strong{color:var(--ink)}
+.hint{color:var(--muted)}
+.err{color:var(--err)}
+
+/* eyebrow above titles */
+.eyebrow-h::before{content:attr(data-eyebrow);display:block;font:600 .8rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(1.2rem,3vw,1.75rem);box-shadow:var(--shadow)}
+.card-title{font:800 1.35rem/1.1 var(--display);margin:0 0 .8rem}
+
+/* fields */
+.field>label,legend,.panel>div>label:first-child{font:600 .78rem/1.2 var(--body);text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);margin-bottom:.4rem}
+label small{text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink-3)}
+input:not([type=checkbox]):not([type=range]):not([type=file]),select{height:auto;font:500 1.05rem/1.3 var(--body);color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:12px;padding:.8em .95em;transition:border-color .15s,box-shadow .15s}
+.panel input:not([type=checkbox]):not([type=range]):not([type=file]),.panel select{padding:.6em .8em;font-size:.95rem;height:auto}
+input[type=file]{border:1.5px dashed var(--line);border-radius:12px;background:var(--field);font:500 .9rem var(--body)}
+input:focus,select:focus,input:focus-visible,select:focus-visible{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px var(--accent-soft)}
+input[aria-invalid="true"]{border-color:var(--err)}
+input[type=checkbox]{accent-color:var(--accent)}
+.opts{border:1.5px solid var(--line);border-radius:14px;background:var(--field);padding:.6rem 1rem .8rem}
+.opts legend{padding:0 .4rem}
+.opts label.opt{font:500 1rem var(--body);text-transform:none;letter-spacing:0;color:var(--ink);padding:.6em 0}
+.opts input[type=checkbox]{accent-color:var(--accent)}
+
+/* buttons: pill with offset shadow */
+button{height:auto;font:600 .95rem/1 var(--body);padding:.85em 1.3em;border-radius:999px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);box-shadow:0 2px 0 var(--ink);transition:transform .12s ease,box-shadow .12s ease,background .15s}
+button:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 3px 0 var(--ink)}
+button:active:not(:disabled){transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.55;cursor:wait}
+.primary,#submitBtn{background:var(--accent);color:var(--accent-ink);font-size:1.05rem;padding:1em 1.4em}
+.ghost{background:var(--card);color:var(--ink);border-color:var(--ink);height:auto}
+.danger-btn{color:var(--err);border-color:var(--err);box-shadow:0 2px 0 var(--err)}
+
+#testTag{position:fixed;right:12px;bottom:12px;z-index:50;background:var(--ink);color:var(--bg);font:600 .72rem/1 var(--mono);letter-spacing:.06em;padding:.7em 1em;border-radius:999px;box-shadow:0 6px 18px -6px rgba(0,0,0,.5)}
+#testTag b{color:var(--accent)}
+}
+@media screen{
+.site-foot{position:relative;z-index:1;text-align:center;padding:1.5rem 1rem 4.5rem;color:var(--ink-3);font:500 .8rem/1.4 var(--body)}
+}
+@media print{.site-foot{display:none!important}}
+@media screen{
+html:root[data-theme="dark"]:not([x]){color-scheme:dark;--bg:#141318;--card:#1d1b22;--ink:#f4f0e8;--ink-2:#cbc6d1;--ink-3:#948f9d;--muted:#a8a3b1;--line:#35323d;--accent:#ff4a1c;--accent-soft:#3b1f17;--err:#ff7a6b;--field:#17161b;--brand:#ff4a1c;--paper-2:#26242d;--ok:#4fd18f;--ok-soft:#173529;--warn:#f0a53a;--warn-soft:#3a2d12;--shadow:0 1px 0 rgba(0,0,0,.3),0 12px 32px -16px rgba(0,0,0,.7)}
+[data-theme="dark"] .nav a:hover{background:rgba(255,255,255,.08)}
+[data-theme="dark"] .res:hover{background:#25232b}
+[data-theme="dark"] #liveBox .tot{background:#0b0a0e;border-color:#4a4752}
+[data-theme="dark"] #liveBox .tot span{color:#b9b3c2}
+[data-theme="dark"] .ok,[data-theme="dark"] #codeGate,[data-theme="dark"] #gate form.card,[data-theme="dark"] a.menu{border-color:#4a4752;box-shadow:0 6px 0 #4a4752}
+[data-theme="dark"] a.menu{box-shadow:0 4px 0 #4a4752}
+[data-theme="dark"] a.menu:hover,[data-theme="dark"] a.menu:focus-visible{border-color:#4a4752;box-shadow:0 6px 0 #4a4752}
+[data-theme="dark"] button{border-color:#8f8a98;box-shadow:0 2px 0 #8f8a98}
+[data-theme="dark"] button:hover:not(:disabled){box-shadow:0 3px 0 #8f8a98}
+[data-theme="dark"] button:active:not(:disabled){box-shadow:0 0 0 #8f8a98}
+[data-theme="dark"] .primary,[data-theme="dark"] #submitBtn,[data-theme="dark"] .res button:not(.again){border-color:#ffb199;box-shadow:0 2px 0 #ffb199}
+[data-theme="dark"] .danger-btn{border-color:var(--err);box-shadow:0 2px 0 var(--err)}
+[data-theme="dark"] .nav a[aria-current="page"]{background:var(--ink);color:#17161a}
+[data-theme="dark"] input[type=file]{color:var(--ink)}
+[data-theme="dark"] .badge{box-shadow:0 12px 32px -12px rgba(0,0,0,.8)}
+#themeBtn{width:auto;position:fixed;right:12px;bottom:12px;z-index:60;padding:.7em 1em;font-size:.8rem;box-shadow:0 6px 18px -6px rgba(0,0,0,.45)}
+}
+@media print{#themeBtn{display:none!important}}
+
+@media screen{
+main{max-width:900px;width:100%;margin:0 auto;padding:clamp(1.25rem,3vw,2.5rem) clamp(1.25rem,4vw,4rem) 4rem}
+#doneView{max-width:560px;margin:0 auto}
+
+/* nav = segmented pill bar */
+.nav{display:flex;flex-wrap:wrap;gap:2px;background:var(--paper-2);padding:4px;border-radius:26px;width:fit-content;max-width:100%;margin:0 0 1.1rem}
+.nav a{font:600 .88rem/1 var(--body);color:var(--ink-2);padding:.7em 1em;border-radius:999px;text-decoration:none}
+.nav a:hover{background:rgba(23,22,26,.06)}
+.nav a[aria-current="page"]{background:var(--ink);color:var(--bg);text-decoration:none}
+
+/* live counter = stat cards */
+#liveBox{position:static;display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;background:none;border:0;box-shadow:none;padding:0;margin:0 0 1.6rem;width:auto;max-width:640px;font-size:1rem}
+#liveBox div{align-items:flex-start;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.8rem 1rem;gap:.35rem;box-shadow:none}
+#liveBox span{font:600 .66rem/1.1 var(--body);letter-spacing:.1em;color:var(--ink-3)}
+#liveBox b{font:800 2.1rem/1 var(--display);letter-spacing:-.03em}
+#liveBox .tot{background:var(--ink);border-color:var(--ink);padding-left:1rem;border-left:1px solid var(--ink)}
+#liveBox .tot span{color:#cfc8bb}
+#liveBox .tot b{color:var(--accent)}
+@media (max-width:520px){#liveBox{grid-template-columns:repeat(2,1fr)}}
+
+/* headings */
+#homeView h1,#formView h1{max-width:14ch}
+#codeGate{max-width:420px;border:1.5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:2rem;display:grid;gap:.4rem}
+#codeGate h2{font:800 2rem/1.05 var(--display)}
+
+/* home menu */
+a.menu{display:block;position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:1.1rem 3.2rem 1.1rem 1.3rem;margin-bottom:.9rem;font:800 1.25rem/1.15 var(--display);letter-spacing:-.02em;transition:transform .12s,box-shadow .12s}
+a.menu span{font:400 .95rem/1.4 var(--body);letter-spacing:0;color:var(--muted);margin-top:.3rem}
+a.menu::after{content:"\2192";position:absolute;right:1.3rem;top:50%;transform:translateY(-50%);font:700 1.4rem var(--body);color:var(--accent)}
+a.menu:hover,a.menu:focus-visible{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 6px 0 var(--ink)}
+a.menu:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* results / feed rows */
+.res{border-top:1px solid var(--line);padding:.9rem .4rem;border-radius:10px;transition:background .12s}
+.res:hover{background:#fbf7f0}
+.res strong{font-weight:700}
+.res button{height:auto;padding:.7em 1em;font-size:.82rem;background:var(--accent);color:var(--accent-ink)}
+.res button.again{background:var(--card);color:var(--ink)}
+.res.new{background:var(--accent-soft);padding-left:.6rem;padding-right:.6rem;animation:fresh 2.4s ease}
+@keyframes fresh{0%{background:var(--accent-soft)}100%{background:transparent}}
+.tag{font:600 .68rem/1 var(--body);text-transform:uppercase;letter-spacing:.08em;padding:.45em .7em;border:0;background:var(--ok-soft);color:var(--ok)}
+.tag.wait{background:var(--warn-soft);color:var(--warn);border:0}
+.feed-head .hint{font-weight:600}
+
+/* tools */
+.tools{max-width:none}
+.tools details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1rem 1.2rem;box-shadow:var(--shadow)}
+summary{font:800 1.1rem/1.2 var(--display);letter-spacing:-.01em}
+.panel{background:var(--bg);border:1px solid var(--line);border-radius:14px}
+.danger{border-top:1px solid var(--line)}
+#sheet{border-radius:10px}
+#sheet .lf{outline-color:var(--accent);background:rgba(255,74,28,.15)}
+#sheet .lf.sel{outline-color:var(--accent)}
+.row-btns button{height:auto;font-size:.85rem}
+
+/* done badge (on screen only) */
+.badge{border-radius:18px;box-shadow:var(--shadow)}
+.done .ghost{height:auto;width:100%}
+.done .primary{margin-top:0}
+
+}
+@media screen{
+#gate{max-width:480px;margin:0 auto;padding:clamp(2rem,12vh,6rem) 1.25rem;position:relative;z-index:1}
+#gate h1{font:800 clamp(2.2rem,6vw,3rem)/1.05 var(--display);letter-spacing:-.02em;margin:0 0 1.5rem}
+#gate h1::before{content:"Staff sign in";display:block;font:600 .8rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+#gate .lead{display:none}
+#gate form.card{border:1.5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);padding:2rem}
+}
+@media screen{
+.panel{min-width:0}
+.panel>*{min-width:0}
+.panel input,.panel select{max-width:100%;min-width:0}
+}
+@media screen{
+details::details-content{box-sizing:border-box}
+}
+/* Download CSV is only for the Staff tools page (behind the code) */
+body:not([data-page="admin"]) #csvBtn,body:not([data-page="admin"]) #csvMsg{display:none!important}
+
+</style>
+<style id="printStyle"></style>
+<style id="layoutStyle"></style>
+</head>
+<body>
+<script>try { var C0 = window.PORTAL_CONFIG || {}; if (C0.adminEmail) document.body.classList.add("admin-mode"); if (localStorage.getItem("portal_staff") === "1") { document.body.classList.add("authed"); if (localStorage.getItem("portal_admin") === "1") document.body.classList.add("is-admin"); } } catch (e) {}</script>
+<div id="gate">
+  <h1 id="gateTitle">Registration Portal</h1>
+  <p class="lead">Staff sign in</p>
+  <form id="loginForm" class="card" autocomplete="on">
+    <div class="field"><label for="loginEmail">Staff email</label><input id="loginEmail" type="email" autocomplete="username" required></div>
+    <div class="field"><label for="loginPw">Password</label><input id="loginPw" type="password" autocomplete="current-password" required></div>
+    <p class="err" id="gateErr" role="alert"></p>
+    <button class="primary" id="loginBtn" type="submit">Sign in</button>
+  </form>
+</div>
+<main>
+  <nav class="nav" id="nav" aria-label="Pages">
+    <a href="#" data-p="home">Home</a>
+    <a href="#register" data-p="register">Register (walk-in)</a>
+    <a href="#preregistered" data-p="preregistered">Pre-registered check-in</a>
+    <a href="#online-desk" data-p="online-desk">Online registrations</a>
+    <a href="#admin" data-p="admin">Staff tools</a>
+    <a href="#" id="signOut">Sign out</a>
+  </nav>
+  <div id="liveBox" role="status" aria-label="Live counts" title="People who have arrived and got a badge. Online counts only those checked in at the desk.">
+    <div><span>Pre-registered</span><b id="lc-pre">0</b></div>
+    <div><span>Walk-in</span><b id="lc-walk">0</b></div>
+    <div><span>Online</span><b id="lc-online">0</b></div>
+    <div class="tot"><span>Total</span><b id="lc-total">0</b></div>
+  </div>
+  <section id="adminOnly" class="card" hidden>
+    <h2>Staff tools</h2>
+    <p class="hint">Only the admin can open this page. Sign out (in the menu above) and sign in with the admin account.</p>
+  </section>
+  <section id="codeGate" class="card" hidden>
+    <h2>Staff tools</h2>
+    <p class="hint">Enter the code to open this page.</p>
+    <div class="field"><label for="codeInput">Code</label><input id="codeInput" type="password" autocomplete="off" inputmode="text"></div>
+    <p class="err" id="codeErr" role="alert"></p>
+    <button class="primary" id="codeBtn" type="button">Open</button>
+  </section>
+  <section id="homeView">
+    <header class="brand" id="homeBrand" hidden><img id="homeLogo" alt="Logo"></header>
+    <h1 class="eyebrow-h" data-eyebrow="Staff desk" id="homeTitle">Registration Portal</h1>
+    <p class="lead">Choose what you want to do.</p>
+    <a class="menu" href="#register">Register a walk-in visitor<span>New visitor at the desk. Prints the badge.</span></a>
+    <a class="menu" href="#preregistered">Pre-registered check-in<span>Find the name, check in and print the badge.</span></a>
+    <a class="menu" href="#online-desk">Online registrations<span>People who registered on their phones appear here live. Check them in and print their badge.</span></a>
+    <a class="menu" href="#admin">Staff tools<span>Download CSV, upload the pre-registered list, print settings, delete data.</span></a>
+    <p class="hint" id="verNote">Page version: 18 Nov 2026 (CSV only in Staff tools)</p>
+  </section>
+  <p class="err" id="serverNote" hidden>This page was opened as a file. Open it from its web link (https://...github.io/.../staff.html) instead.</p>
+  <p class="err" id="previewNote" hidden>This looks like a preview window, where saving, printing and downloads are often blocked. Download this file and open it in Chrome or Edge instead.</p>
+  <div id="formView">
+    <header class="brand" id="brandBar" hidden><img id="logo" alt="Logo" hidden></header>
+    <p class="err" id="logoNote" hidden></p>
+    <h1 class="eyebrow-h" data-eyebrow="Registration desk" id="eventName">Visitor registration</h1>
+    <p class="lead" id="lead"><strong>Visitor registration.</strong> Fill in your details and we'll print your entry badge.</p>
+    <div class="cols">
+    <section class="col-reg">
+    <h3 class="card-title">New visitor? Register here</h3>
+    <div class="card">
+      <div class="field"><label for="name">Full name</label><input id="name" autocomplete="name"><p class="err" id="e-name"></p></div>
+      <div class="field"><label for="email">Email</label><input id="email" type="email" inputmode="email" autocomplete="email"><p class="err" id="e-email"></p></div>
+      <div class="field"><label for="phone">Phone <small>(optional)</small></label><input id="phone" type="tel" inputmode="tel" autocomplete="tel"><p class="err" id="e-phone"></p></div>
+      <div class="field"><label for="company">Company name</label><input id="company" autocomplete="organization"><p class="err" id="e-company"></p></div>
+      <div class="field"><label for="designation">Designation</label><input id="designation" autocomplete="organization-title"><p class="err" id="e-designation"></p></div>
+      <div class="field">
+        <fieldset class="opts" id="heard" tabindex="-1">
+          <legend>How did you hear about this exhibition?</legend>
+          <label class="opt"><input type="checkbox" name="heard" value="Social media"> Social media</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Invitation"> Invitation</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Posters"> Posters</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Friend or colleague"> Friend or colleague</label>
+          <label class="opt"><input type="checkbox" name="heard" value="Other" id="heardOther"> Other</label>
+          <input id="heardOtherText" type="text" maxlength="100" placeholder="Please tell us where" hidden>
+        </fieldset>
+        <p class="err" id="e-heard"></p>
+      </div>
+      <p class="err" id="e-form" role="alert"></p>
+      <button class="primary" id="submitBtn" type="button">Register</button>
+    </div>
+    </section>
+    <aside class="col-pre">
+      <h3 class="card-title">Pre-registered? Check in here</h3>
+      <div class="card" id="preCard">
+        <div class="field"><label for="preName">Name</label><input id="preName" autocomplete="off"></div>
+        <div class="field"><label for="preCompany">Company name</label><input id="preCompany" autocomplete="off"></div>
+        <p class="hint" id="preEmpty" role="status">No pre-registered list yet. Ask staff to upload the Excel file under "Pre-registered list" on the Staff tools page.</p>
+        <p class="hint" id="preNote" role="status"></p>
+        <div id="preResults"></div>
+      </div>
+    </aside>
+    </div>
+
+    <section id="onlineDesk" aria-label="Online registrations">
+      <div class="feed-head"><h3 class="card-title" style="margin:0">Registered on their phones</h3><span class="hint" id="feedCount" role="status"></span></div>
+      <p class="hint">This list updates by itself. Click "Check in &amp; print badge" when the visitor arrives at the desk.</p>
+      <p class="err" id="feedErr" role="alert"></p>
+      <div class="card"><div id="feedList"></div><p class="hint" id="feedEmpty">Nobody has registered online yet. New registrations appear here by themselves.</p></div>
+    </section>
+
+    <div class="tools">
+      <button class="ghost" id="quickBtn" type="button">Quick badge (name, designation, company only)</button>
+      <button class="ghost" id="csvBtn" type="button" hidden>Download CSV</button>
+      <p class="err" id="csvMsg" role="alert" hidden></p>
+      <p class="hint" id="connNote" role="status"></p>
+      <details id="toolSettings">
+        <summary>Print &amp; branding settings</summary>
+        <div class="panel">
+          <div><label for="s-event">Event name</label><input id="s-event"></div>
+          <div>
+            <label for="s-logo">Logo</label>
+            <input id="s-logo" type="file" accept="image/*">
+            <div class="row-btns" style="margin-top:8px"><button class="ghost" id="logoRemove" type="button">Remove logo</button></div>
+            <p class="hint" style="margin-top:8px">A logo uploaded here changes only this laptop. To use one logo on every laptop, put logo.png in the GitHub repository and set logo: "logo.png" in the code.</p>
+          </div>
+          <div>
+            <label>Print margins (mm)</label>
+            <div class="grid4">
+              <div><label for="m-top">Top</label><input id="m-top" type="number" min="0" max="60" step="1"></div>
+              <div><label for="m-right">Right</label><input id="m-right" type="number" min="0" max="60" step="1"></div>
+              <div><label for="m-bottom">Bottom</label><input id="m-bottom" type="number" min="0" max="60" step="1"></div>
+              <div><label for="m-left">Left</label><input id="m-left" type="number" min="0" max="60" step="1"></div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div><label for="s-size">Paper size</label>
+              <select id="s-size"><option value="auto">Printer default</option><option value="A4">A4</option><option value="A5">A5</option><option value="A6">A6</option><option value="letter">Letter</option></select></div>
+            <div><label for="s-width">Badge width (mm)</label><input id="s-width" type="number" min="40" max="200" step="1"></div>
+          </div>
+          <label><input id="s-auto" type="checkbox">Open the print window automatically after registering</label>
+          <p class="hint">In the print window, set Margins to "Default" and turn off "Headers and footers" so these margins apply.</p>
+          <div id="layoutBox">
+            <label>Badge print position (for pre-printed cards)</label>
+            <label><input id="L-on" type="checkbox">Use exact positioning (overrides the margins and badge width above)</label>
+            <div class="grid2">
+              <div><label for="L-W">Card width (mm)</label><input id="L-W" type="number" step="0.5" min="30" max="400"></div>
+              <div><label for="L-H">Card height (mm)</label><input id="L-H" type="number" step="0.5" min="30" max="400"></div>
+            </div>
+            <label>Paper the printer will use</label>
+            <div class="grid2">
+              <div><select id="L-preset" aria-label="Paper preset"><option value="0,0">Same as the card (4 x 6 in)</option><option value="152.4,101.6">4 x 6 in landscape</option><option value="148,105">A6 landscape (148 x 105)</option><option value="210,148">A5 landscape (210 x 148)</option><option value="297,210">A4 landscape (297 x 210)</option><option value="custom">Custom (type below)</option></select></div>
+              <div><label><input id="L-heavy" type="checkbox">Heavier, sharper text</label><label><input id="L-art" type="checkbox">Also print the guide picture (blank cards only)</label><label for="L-ink">Text ink</label><select id="L-ink"><option value="#000000">Pure black (uses the black ink)</option><option value="#12182b">Rich dark (uses colour inks, try this on glossy cards)</option></select></div>
+            </div>
+            <div class="grid4">
+              <div><label for="L-SW">Paper width</label><input id="L-SW" type="number" step="0.5" min="0" max="1000"></div>
+              <div><label for="L-SH">Paper height</label><input id="L-SH" type="number" step="0.5" min="0" max="1000"></div>
+              <div><label for="L-OX">Card from left</label><input id="L-OX" type="number" step="0.5"></div>
+              <div><label for="L-OY">Card from top</label><input id="L-OY" type="number" step="0.5"></div>
+            </div>
+            <p class="hint">Many inkjets (for example Canon G1030) have no A6 paper size. Pick the paper size the printer does offer (A5 or 4 x 6 in), then use "Card from left / top" to say where your card sits on that paper. 0 and 0 means the card fills the paper.</p>
+            <div class="grid2">
+              <div><label for="L-rot">Rotate the printout</label>
+                <select id="L-rot"><option value="0">0 (normal)</option><option value="90">90 clockwise</option><option value="180">180</option><option value="270">270 clockwise</option></select></div>
+              <div><label for="L-gop">Guide image strength</label><input id="L-gop" type="range" min="0" max="1" step="0.05"></div>
+            </div>
+            <p class="hint">Drag the three orange boxes onto the card, or type exact numbers below (millimetres from the top-left corner of the card).</p>
+            <div id="sheet"><div id="guideImg"></div></div>
+            <div id="layoutFields" style="display:grid;gap:10px"></div>
+            <div>
+              <label for="L-guide">Guide picture of your card (not printed, only helps you place things)</label>
+              <input id="L-guide" type="file" accept="image/*">
+              <div class="row-btns" style="margin-top:8px">
+                <button class="ghost" id="L-gfolder" type="button">Use card-guide.jpg</button>
+                <button class="ghost" id="L-gl" type="button">Turn left</button>
+                <button class="ghost" id="L-gr" type="button">Turn right</button>
+                <button class="ghost" id="L-gx" type="button">Remove</button>
+              </div>
+              <p class="hint" id="L-msg" role="status"></p>
+            </div>
+            <div class="row-btns">
+              <button class="ghost" id="L-grid" type="button">Print alignment grid</button>
+            </div>
+            <p class="hint">Chrome print window: set Paper size to <strong>4 x 6 in</strong> (10 x 15 cm), Margins to None, Scale 100, and Color to <strong>Black and white</strong>. The preview page must be the same shape as the card with the name visible in the white band.</p>
+            <p class="hint">The alignment grid prints a ruler (numbers are mm) with the three boxes. Print it on a spare card, hold it to the light against the real card, and read off the numbers to move the boxes.</p>
+          </div>
+          <p class="hint" id="saveNote" role="status"></p>
+          <div class="row-btns">
+            <button class="ghost" id="testBtn" type="button">Print test badge</button>
+            <button class="ghost" id="resetBtn" type="button">Reset to code defaults</button>
+          </div>
+          <div class="danger">
+            <label>Delete all registrations</label>
+            <p class="hint">Removes every registration (online and walk-in) and the whole pre-registered list from Firebase, for every laptop. A CSV copy is downloaded to this computer first. Your print settings are kept.</p>
+            <div class="row-btns" id="wipeAsk">
+              <button class="ghost danger-btn" id="wipeBtn" type="button">Delete all registrations</button>
+            </div>
+            <div id="wipeConfirm" hidden>
+              <p class="err" id="wipeMsg"></p>
+              <div class="row-btns">
+                <button class="ghost danger-btn" id="wipeYes" type="button">Yes, delete everything</button>
+                <button class="ghost" id="wipeNo" type="button">Cancel</button>
+              </div>
+            </div>
+            <p class="hint" id="wipeNote" role="status"></p>
+          </div>
+        </div>
+      </details>
+      <details id="toolUpload">
+        <summary>Pre-registered list (upload from Excel)</summary>
+        <div class="panel">
+          <p class="hint">Upload an Excel (.xlsx) or CSV file. The first row must have headings such as Name, Email, Phone, Company, Designation (only Name is required; First name + Last name also work). Format the phone column as Text so leading zeros are kept. People already in the list are skipped, so you can upload again to add more.</p>
+          <input id="preFile" type="file" accept=".xlsx,.csv,.tsv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+          <div class="row-btns"><button class="ghost" id="preUpload" type="button">Upload list</button></div>
+          <p class="hint" id="preInfo" role="status"></p>
+          <p class="hint" id="preMsg" role="status"></p>
+          <p class="err" id="preErr" role="alert"></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div id="doneView" class="done" hidden>
+    <p class="hint" id="editHint">Click the name, designation or company on the badge to change it. Changes affect the printed badge only, not the saved list.</p>
+    <div class="badge">
+      <div class="slot"></div>
+      <img id="b-logo" class="b-logo" alt="" hidden>
+      <p class="b-event" id="b-event"></p>
+      <h2 id="b-name" contenteditable="true" spellcheck="false" role="textbox" aria-label="Name" data-ph="Name"></h2>
+      <p class="role" id="b-role" contenteditable="true" spellcheck="false" role="textbox" aria-label="Designation" data-ph="Designation"></p>
+      <p class="org" id="b-org" contenteditable="true" spellcheck="false" role="textbox" aria-label="Company" data-ph="Company"></p>
+      <div id="gridLayer" aria-hidden="true"></div>
+    </div>
+    <p class="msg"><strong id="doneTitle"></strong> <span id="doneText"></span></p>
+    <div class="actions">
+      <button class="primary" id="printBtn" type="button">Print badge</button>
+      <button class="ghost" id="nextBtn" type="button">Register next visitor</button>
+      <span id="countdown"></span>
+    </div>
+  </div>
+</main>
+
+<script>
+// The Staff tools code is set in config.js
+var ADMIN_EMAIL = String((window.PORTAL_CONFIG && window.PORTAL_CONFIG.adminEmail) || "").trim().toLowerCase();
+  var STAFF_TOOLS_CODE = (window.PORTAL_CONFIG && window.PORTAL_CONFIG.staffToolsCode !== undefined) ? String(window.PORTAL_CONFIG.staffToolsCode) : "1234";
+// The page talks to Firebase through API (filled in by the module script at the bottom once staff have signed in)
+window.__apiReady = new Promise(function(r){ window.__apiResolve = r; });
+window.API = {};
+["status","register","checkin","search","onlineFeed","exportCsv","upload","deleteAll"].forEach(function(n){
+  window.API[n] = function(){ var a = arguments; return window.__apiReady.then(function(impl){ return impl[n].apply(null, a); }); };
+});
+window.API.onChange = function(cb){ window.__apiReady.then(function(impl){ impl.onChange(cb); }); };
+</script>
+<script>
+(function(){
+  /* =====================================================================
+     EDIT HERE  -  your event details and print defaults
+     ===================================================================== */
+  var CONFIG = {
+    eventName: (window.PORTAL_CONFIG && window.PORTAL_CONFIG.eventName) || "Exhibition Registration Portal",   // set in config.js
+    logo: "",         // "" = no logo, or "logo.png" (upload logo.png to the same GitHub folder)
+    margins: { top: 10, right: 10, bottom: 10, left: 10 },  // print margins in millimetres
+    pageSize: "auto",        // "auto" (printer default) | "A4" | "A5" | "A6" | "letter"
+    badgeWidthMm: 90,        // width of the printed badge in millimetres
+    autoPrint: false,        // true = open the print window right after each registration
+    layout: {                // exact print position on the pre-printed card (millimetres from top-left)
+      enabled: true, paperW: 152.4, paperH: 101.6, rotate: 0, guideOpacity: 0.6,
+      sheetW: 0, sheetH: 0, offX: 0, offY: 0, heavy: true, art: false, ink: "#000000",   // sheet 0 = same size as the card; art = also print the guide picture
+      name: { x: 8, y: 40, w: 136.4, size: 26, align: "center", fit: true },
+      role: { x: 8, y: 51.5, w: 136.4, size: 16, align: "center", fit: true },
+      org:  { x: 8, y: 59, w: 136.4, size: 14, align: "center", fit: true }
+    },
+    resetSeconds: 15         // seconds before the form clears itself after registering
+  };
+  /* ===================== end of EDIT HERE ============================= */
+
+  var $ = function(id){ return document.getElementById(id); };
+  var PAGE = location.hash.replace(/^#\/?/, "").toLowerCase();
+  var KNOWN = {register:1, preregistered:1, "online-desk":1, admin:1};
+  if (!KNOWN[PAGE]) PAGE = "home";
+  function readPage(){ var p = location.hash.replace(/^#\/?/, "").toLowerCase(); return KNOWN[p] ? p : "home"; }
+  window.addEventListener("hashchange", function(){
+    // Switch page in place (no reload, so no flash and no waiting)
+    PAGE = readPage();
+    stopCountdown();
+    $("doneView").hidden = true; $("formView").hidden = false;
+    $("preResults").textContent = ""; $("preNote").textContent = "";
+    feedSig = "";
+    applyPage(); applyLock();
+    window.scrollTo(0, 0);
+    if (PAGE === "online-desk") loadFeed();
+  });
+  var PAGE_TEXT = {
+    register: ["Visitor registration.", "Fill in your details and we'll print your entry badge."],
+    preregistered: ["Pre-registered check-in.", "Find your name, check in and collect your badge."],
+    "online-desk": ["Online registrations.", "People who registered on their phones appear here live. Check them in and print their badge."],
+    admin: ["Staff tools.", "Download the list, upload the pre-registered list, change print settings."]
+  };
+  // ---- code for Staff tools ----
+  var codeTries = 0, codeBlockedUntil = 0;
+  function codeOk(){
+    if (!STAFF_TOOLS_CODE) return true;
+    try { var t = +sessionStorage.getItem("portal_code_ok") || 0; return t && Date.now() - t < 30 * 60 * 1000; } catch (e) { return false; }
+  }
+  function adminAccess(){ return ADMIN_EMAIL ? document.body.classList.contains("is-admin") : codeOk(); }
+  window.__refreshLock = function(){ applyLock(); };
+  function applyLock(){
+    var need = PAGE === "admin" && !adminAccess();
+    document.body.classList.toggle("locked-admin", need);
+    $("codeGate").hidden = !(need && !ADMIN_EMAIL);
+    $("adminOnly").hidden = !(need && ADMIN_EMAIL);
+    if (need && !ADMIN_EMAIL) { $("codeInput").value = ""; $("codeErr").textContent = ""; setTimeout(function(){ $("codeInput").focus(); }, 30); }
+  }
+  function tryCode(){
+    if (Date.now() < codeBlockedUntil) { $("codeErr").textContent = "Too many wrong tries. Wait a few seconds."; return; }
+    if ($("codeInput").value === STAFF_TOOLS_CODE) {
+      try { sessionStorage.setItem("portal_code_ok", String(Date.now())); } catch (e) {}
+      codeTries = 0; applyLock();
+    } else {
+      codeTries++; $("codeInput").value = "";
+      if (codeTries >= 5) { codeTries = 0; codeBlockedUntil = Date.now() + 30000; $("codeErr").textContent = "Too many wrong tries. Wait 30 seconds."; }
+      else $("codeErr").textContent = "Wrong code.";
+      $("codeInput").focus();
+    }
+  }
+  function applyPage(){
+    document.body.setAttribute("data-page", PAGE);
+    $("csvBtn").hidden = PAGE !== "admin"; $("csvMsg").hidden = PAGE !== "admin";
+    var t = PAGE_TEXT[PAGE];
+    if (t) {
+      var lead = $("lead"); lead.textContent = "";
+      var b = document.createElement("strong"); b.textContent = t[0];
+      lead.appendChild(b); lead.appendChild(document.createTextNode(" " + t[1]));
+    }
+    Array.prototype.forEach.call(document.querySelectorAll("#nav a"), function(a){
+      if (a.getAttribute("data-p") === PAGE) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+  }
+  var FIELDS = ["name","email","phone","company","designation"];
+  var LS_SETTINGS = "visitor_settings_v2";
+  var SIZES = ["auto","A4","A5","A6","letter"];
+  var timer = null, badgeMode = "registered";
+
+  function lsGet(k, def){ try { var r = localStorage.getItem(k); return r ? JSON.parse(r) : def; } catch(e){ return def; } }
+  function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
+  function num(v, def, min, max){ var n = parseFloat(v); if (isNaN(n)) n = def; return Math.min(max, Math.max(min, n)); }
+
+  var serverCount = 0, walkins = 0, preTotal = 0, preAttended = 0, onlineTotal = 0, pinRequired = false, online = true;
+
+  // Values changed in the settings panel are remembered per setting. If you later
+  // edit that same setting in CONFIG above, the code value wins automatically.
+  function buildSettings(){
+    var s = JSON.parse(JSON.stringify(CONFIG)), saved = lsGet(LS_SETTINGS, {});
+    Object.keys(CONFIG).forEach(function(k){
+      var o = saved[k];
+      if (o && typeof o === "object" && o.b === JSON.stringify(CONFIG[k])) s[k] = o.v;
+    });
+    return s;
+  }
+  function saveSettings(){
+    var out = {};
+    Object.keys(CONFIG).forEach(function(k){
+      if (JSON.stringify(settings[k]) !== JSON.stringify(CONFIG[k])) out[k] = { v: settings[k], b: JSON.stringify(CONFIG[k]) };
+    });
+    var ok = lsSet(LS_SETTINGS, out);
+    $("saveNote").textContent = ok ? "Saved on this device." : "Could not save (this browser blocks storage). Changes last until you reload; edit CONFIG in the code instead.";
+    return ok;
+  }
+  var settings = buildSettings();
+
+  // ---- Apply branding + print settings to the page ----
+  function applySettings(){
+    var s = settings, m = s.margins;
+    $("eventName").textContent = s.eventName || "Registration";
+    $("homeTitle").textContent = s.eventName || "Registration Portal";
+    $("gateTitle").textContent = s.eventName || "Registration Portal";
+    $("homeBrand").hidden = !s.logo; if (s.logo) $("homeLogo").src = s.logo;
+    $("b-event").textContent = s.eventName || "";
+    $("b-event").hidden = !s.eventName;
+    document.title = (s.eventName ? s.eventName + " - " : "") + "Registration";
+    $("brandBar").hidden = !s.logo;
+    if (!s.logo) $("logoNote").hidden = true;
+    ["logo","b-logo"].forEach(function(id){
+      var img = $(id);
+      if (s.logo) {
+        img.onload = function(){ $("logoNote").hidden = true; };
+        img.onerror = function(){
+          img.hidden = true; $("brandBar").hidden = true;
+          $("logoNote").textContent = "The logo could not be loaded. If you set logo in the code, put that image file in the same folder as this HTML file, or upload it under Print & branding settings.";
+          $("logoNote").hidden = false;
+        };
+        img.src = s.logo; img.hidden = false;
+      } else { img.removeAttribute("src"); img.hidden = true; }
+    });
+    var size = SIZES.indexOf(s.pageSize) > -1 && s.pageSize !== "auto" ? "size:" + s.pageSize + ";" : "";
+    var w = num(s.badgeWidthMm, 90, 40, 200);
+    $("printStyle").textContent = "@page{" + size + "margin:" + num(m.top,10,0,60) + "mm " + num(m.right,10,0,60) + "mm " + num(m.bottom,10,0,60) + "mm " + num(m.left,10,0,60) + "mm}" +
+      "@media print{.badge{width:" + w + "mm;max-width:100%}}";
+    if (typeof updateLayoutCss === "function") updateLayoutCss();
+  }
+  function syncInputs(){
+    var s = settings;
+    $("s-event").value = s.eventName || "";
+    ["top","right","bottom","left"].forEach(function(k){ $("m-" + k).value = s.margins[k]; });
+    $("s-size").value = SIZES.indexOf(s.pageSize) > -1 ? s.pageSize : "auto";
+    $("s-width").value = s.badgeWidthMm;
+    $("s-auto").checked = !!s.autoPrint;
+    if (typeof syncLayout === "function") syncLayout();
+  }
+  function onSettingsInput(){
+    settings.eventName = $("s-event").value;
+    ["top","right","bottom","left"].forEach(function(k){ settings.margins[k] = num($("m-" + k).value, 10, 0, 60); });
+    settings.pageSize = $("s-size").value;
+    settings.badgeWidthMm = num($("s-width").value, 90, 40, 200);
+    settings.autoPrint = $("s-auto").checked;
+    saveSettings();
+    applySettings();
+  }
+  ["s-event","m-top","m-right","m-bottom","m-left","s-size","s-width","s-auto"].forEach(function(id){
+    $(id).addEventListener("input", onSettingsInput);
+    $(id).addEventListener("change", onSettingsInput);
+  });
+
+  // ---- Exact badge positioning (for pre-printed cards) ----
+  var FKEYS = ["name","role","org"], FLABEL = {name:"Name", role:"Designation", org:"Company"};
+  var SAMPLE = {name:"Sample Visitor", role:"Designation", org:"Company Name"};
+  var FBADGE = {name:"b-name", role:"b-role", org:"b-org"};
+  var FWEIGHT = {name:800, role:600, org:400};
+  var ALIGNS = ["left","center","right"];
+  var LS_GUIDE = "visitor_guide_v1", guide = lsGet(LS_GUIDE, "");
+  var measure = document.createElement("canvas").getContext("2d");
+  function LL(){ return settings.layout; }
+  function paper(){
+    var L = LL();
+    return { W: num(L.paperW,148,30,400), H: num(L.paperH,105,30,400), r: [0,90,180,270].indexOf(+L.rotate) > -1 ? +L.rotate : 0 };
+  }
+  function fitPt(text, k){
+    var f = LL()[k], max = num(f.size,14,4,120);
+    if (!f.fit || !text) return max;
+    measure.font = FWEIGHT[k] + ' 100px Inter, system-ui, sans-serif';
+    var w100 = measure.measureText(text).width;
+    if (!w100) return max;
+    var boxPx = num(f.w,100,5,400) * 96 / 25.4;
+    return Math.max(6, Math.min(max, Math.round(boxPx * 100 / w100 * 72 / 96 * 10) / 10));
+  }
+  function updateLayoutCss(){
+    var st = $("layoutStyle"), L = LL();
+    if (!L || !L.enabled) { st.textContent = ""; return; }
+    var p = paper(), W = p.W, H = p.H, fw = p.r % 180 ? H : W, fh = p.r % 180 ? W : H;
+    var SW = num(L.sheetW, 0, 0, 1000) || fw, SH = num(L.sheetH, 0, 0, 1000) || fh;
+    var ox = num(L.offX, 0, -200, 500), oy = num(L.offY, 0, -200, 500);
+    var art = L.art && guide ? 'background:#fff url("' + guide + '") 0 0/100% 100% no-repeat;' : "background:transparent;";
+    var ink = /^#[0-9a-f]{6}$/i.test(L.ink) ? L.ink : "#000000";
+    var heavy = L.heavy ? "-webkit-text-stroke:0.35pt " + ink + ";" : "";
+    var css = "@page{size:" + SW + "mm " + SH + "mm;margin:0}@media print{" +
+      "*{-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+      "html,body{margin:0!important;padding:0!important;width:" + SW + "mm}" +
+      "main{padding:0!important;margin:0!important;max-width:none!important}" +
+      "#doneView{max-width:none!important;margin:0!important;padding:0!important}" +
+      "#doneView .badge{position:absolute!important;left:" + (ox + (fw - W) / 2) + "mm;top:" + (oy + (fh - H) / 2) + "mm;width:" + W + "mm!important;height:" + H + "mm!important;max-width:none!important;" +
+      "margin:0!important;padding:0!important;border:0!important;overflow:visible;transform-origin:50% 50%;transform:" + (p.r ? "rotate(" + p.r + "deg)" : "none") + ";animation:none!important;" + art + "}" +
+      "body.gridmode #doneView .badge>#gridLayer{display:block!important;position:absolute;left:0;top:0;width:" + W + "mm;height:" + H + "mm}";
+    FKEYS.forEach(function(k){
+      var f = L[k], text = ($(FBADGE[k]).textContent || "").trim();
+      var al = ALIGNS.indexOf(f.align) > -1 ? f.align : "center";
+      css += "#doneView .badge>#" + FBADGE[k] + "{display:block!important;position:absolute!important;left:" + num(f.x,0,-50,500) + "mm;top:" + num(f.y,0,-50,500) +
+        "mm;width:" + num(f.w,100,5,400) + "mm;margin:0!important;padding:0!important;font-size:" + fitPt(text, k) + "pt;line-height:1.15;letter-spacing:0;font-weight:" +
+        FWEIGHT[k] + ";color:" + ink + "!important;opacity:1;text-rendering:geometricPrecision;" + heavy + "text-align:" + al + ";white-space:" + (f.fit ? "nowrap" : "normal") + ";overflow:visible}";
+    });
+    st.textContent = css + "}";
+  }
+  function buildGrid(){
+    var p = paper(), W = p.W, H = p.H, L = LL(), s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + 'mm" height="' + H + 'mm" viewBox="0 0 ' + W + ' ' + H + '" style="display:block;font-family:Arial,sans-serif">';
+    var x, y, major;
+    for (x = 0; x <= W; x += 5) {
+      major = x % 10 === 0;
+      s += '<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + H + '" stroke="#000" stroke-width="' + (major ? 0.2 : 0.08) + '"/>';
+      if (major && x > 0) s += '<text x="' + (x + 0.4) + '" y="3" font-size="2.8" fill="#000">' + x + '</text>';
+    }
+    for (y = 0; y <= H; y += 5) {
+      major = y % 10 === 0;
+      s += '<line x1="0" y1="' + y + '" x2="' + W + '" y2="' + y + '" stroke="#000" stroke-width="' + (major ? 0.2 : 0.08) + '"/>';
+      if (major && y > 0) s += '<text x="0.6" y="' + (y - 0.5) + '" font-size="2.8" fill="#000">' + y + '</text>';
+    }
+    FKEYS.forEach(function(k){
+      var f = L[k], h = num(f.size,14,4,120) * 0.3528 * 1.15;
+      s += '<rect x="' + f.x + '" y="' + f.y + '" width="' + f.w + '" height="' + h.toFixed(2) + '" fill="none" stroke="#000" stroke-width="0.35" stroke-dasharray="1.2 0.8"/>';
+    });
+    s += '<rect x="0.1" y="0.1" width="' + (W - 0.2) + '" height="' + (H - 0.2) + '" fill="none" stroke="#000" stroke-width="0.4"/></svg>';
+    return s;
+  }
+  function renderSheet(){
+    var sh = $("sheet"), p = paper(), L = LL();
+    if (!sh || !sh.clientWidth) return;
+    sh.style.aspectRatio = p.W + " / " + p.H;
+    var sc = sh.clientWidth / p.W;
+    var g = $("guideImg");
+    g.style.backgroundImage = guide ? "url(" + guide + ")" : "none";
+    g.style.opacity = num(L.guideOpacity, 0.6, 0, 1);
+    FKEYS.forEach(function(k){
+      var f = L[k], el = $("lf-" + k);
+      if (!el) {
+        el = document.createElement("div"); el.className = "lf"; el.id = "lf-" + k; el.setAttribute("data-k", k);
+        sh.appendChild(el);
+      }
+      el.textContent = SAMPLE[k];
+      el.style.left = num(f.x,0,-50,500) * sc + "px";
+      el.style.top = num(f.y,0,-50,500) * sc + "px";
+      el.style.width = num(f.w,100,5,400) * sc + "px";
+      el.style.fontSize = fitPt(SAMPLE[k], k) * 25.4 / 72 * sc + "px";
+      el.style.fontWeight = FWEIGHT[k];
+      el.style.textAlign = ALIGNS.indexOf(f.align) > -1 ? f.align : "center";
+      el.style.whiteSpace = f.fit ? "nowrap" : "normal";
+    });
+  }
+  function buildLayoutUi(){
+    var html = "";
+    FKEYS.forEach(function(k){
+      function n(key, label, step){ return '<div><label for="L-' + k + '-' + key + '">' + label + '</label><input id="L-' + k + '-' + key + '" type="number" step="' + step + '"></div>'; }
+      html += '<div class="lf-row"><strong>' + FLABEL[k] + '</strong><div class="grid4">' + n("x","Left (mm)","0.5") + n("y","Top (mm)","0.5") + n("w","Width (mm)","0.5") + n("size","Size (pt)","0.5") +
+        '</div><div class="grid2"><div><label for="L-' + k + '-align">Align</label><select id="L-' + k + '-align"><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></div>' +
+        '<label style="align-self:end"><input id="L-' + k + '-fit" type="checkbox">Shrink long text to fit the width</label></div></div>';
+    });
+    $("layoutFields").innerHTML = html;
+  }
+  function syncLayout(){
+    var L = LL(); if (!L) return;
+    $("L-SW").value = L.sheetW; $("L-SH").value = L.sheetH; $("L-OX").value = L.offX; $("L-OY").value = L.offY; $("L-heavy").checked = !!L.heavy; $("L-art").checked = !!L.art; $("L-ink").value = L.ink || "#000000";
+    var pv = (num(L.sheetW,0,0,1000)) + "," + (num(L.sheetH,0,0,1000)); $("L-preset").value = Array.prototype.some.call($("L-preset").options, function(o){ return o.value === pv; }) ? pv : "custom";
+    $("L-on").checked = !!L.enabled; $("L-W").value = L.paperW; $("L-H").value = L.paperH; $("L-rot").value = String(L.rotate); $("L-gop").value = L.guideOpacity;
+    FKEYS.forEach(function(k){
+      var f = L[k];
+      ["x","y","w","size"].forEach(function(key){ $("L-" + k + "-" + key).value = f[key]; });
+      $("L-" + k + "-align").value = f.align; $("L-" + k + "-fit").checked = !!f.fit;
+    });
+    updateLayoutCss(); renderSheet();
+  }
+  function readLayout(){
+    var L = LL();
+    L.sheetW = num($("L-SW").value, 0, 0, 1000); L.sheetH = num($("L-SH").value, 0, 0, 1000); L.offX = num($("L-OX").value, 0, -200, 500); L.offY = num($("L-OY").value, 0, -200, 500); L.heavy = $("L-heavy").checked; L.art = $("L-art").checked; L.ink = $("L-ink").value;
+    L.enabled = $("L-on").checked; L.paperW = num($("L-W").value, 148, 30, 400); L.paperH = num($("L-H").value, 105, 30, 400);
+    L.rotate = +$("L-rot").value; L.guideOpacity = num($("L-gop").value, 0.6, 0, 1);
+    FKEYS.forEach(function(k){
+      var f = L[k];
+      f.x = num($("L-" + k + "-x").value, f.x, -50, 500); f.y = num($("L-" + k + "-y").value, f.y, -50, 500);
+      f.w = num($("L-" + k + "-w").value, f.w, 5, 400); f.size = num($("L-" + k + "-size").value, f.size, 4, 120);
+      f.align = $("L-" + k + "-align").value; f.fit = $("L-" + k + "-fit").checked;
+    });
+  }
+  function onLayoutInput(){ readLayout(); saveSettings(); updateLayoutCss(); renderSheet(); }
+  buildLayoutUi();
+  $("L-preset").addEventListener("change", function(){
+    if (this.value === "custom") return;
+    var v = this.value.split(","); $("L-SW").value = v[0]; $("L-SH").value = v[1]; onLayoutInput();
+  });
+  ["L-on","L-W","L-H","L-rot","L-gop","L-SW","L-SH","L-OX","L-OY","L-heavy","L-art","L-ink"].concat([].concat.apply([], FKEYS.map(function(k){ return ["x","y","w","size","align","fit"].map(function(key){ return "L-" + k + "-" + key; }); }))).forEach(function(id){
+    $(id).addEventListener("input", onLayoutInput); $(id).addEventListener("change", onLayoutInput);
+  });
+  // drag the boxes on the preview
+  (function(){
+    var drag = null;
+    $("sheet").addEventListener("pointerdown", function(e){
+      var el = e.target.closest && e.target.closest(".lf"); if (!el) return;
+      var k = el.getAttribute("data-k"), f = LL()[k], sc = $("sheet").clientWidth / paper().W;
+      drag = { k: k, sx: e.clientX, sy: e.clientY, x: f.x, y: f.y, sc: sc };
+      el.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    $("sheet").addEventListener("pointermove", function(e){
+      if (!drag) return;
+      var f = LL()[drag.k];
+      f.x = Math.round((drag.x + (e.clientX - drag.sx) / drag.sc) * 2) / 2;
+      f.y = Math.round((drag.y + (e.clientY - drag.sy) / drag.sc) * 2) / 2;
+      $("L-" + drag.k + "-x").value = f.x; $("L-" + drag.k + "-y").value = f.y;
+      updateLayoutCss(); renderSheet();
+    });
+    function end(){ if (drag) { drag = null; saveSettings(); } }
+    $("sheet").addEventListener("pointerup", end); $("sheet").addEventListener("pointercancel", end);
+  })();
+  // guide picture
+  function setGuide(dataUrl, deg){
+    var im = new Image();
+    im.onerror = function(){ $("L-msg").textContent = "That image could not be read."; };
+    im.onload = function(){
+      var iw = im.naturalWidth, ih = im.naturalHeight, s = Math.min(1, 1400 / Math.max(iw, ih)), r = deg % 180 !== 0;
+      var cw = Math.round((r ? ih : iw) * s), ch = Math.round((r ? iw : ih) * s);
+      var c = document.createElement("canvas"); c.width = cw; c.height = ch;
+      var x = c.getContext("2d"); x.translate(cw / 2, ch / 2); x.rotate(deg * Math.PI / 180);
+      x.drawImage(im, -iw * s / 2, -ih * s / 2, iw * s, ih * s);
+      guide = c.toDataURL("image/jpeg", 0.85); lsSet(LS_GUIDE, guide); $("L-msg").textContent = ""; renderSheet();
+    };
+    im.src = dataUrl;
+  }
+  $("L-guide").addEventListener("change", function(){
+    var f = this.files && this.files[0]; if (!f) return;
+    var r = new FileReader(); r.onload = function(){ setGuide(r.result, 0); }; r.readAsDataURL(f);
+  });
+  $("L-gfolder").addEventListener("click", function(){
+    fetch("card-guide.jpg", {cache:"no-store"}).then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
+      var r = new FileReader(); r.onload = function(){ setGuide(r.result, 0); }; r.readAsDataURL(b);
+    }).catch(function(){ $("L-msg").textContent = "card-guide.jpg was not found in the GitHub folder next to staff.html."; });
+  });
+  $("L-gl").addEventListener("click", function(){ if (guide) setGuide(guide, -90); });
+  $("L-gr").addEventListener("click", function(){ if (guide) setGuide(guide, 90); });
+  $("L-gx").addEventListener("click", function(){ guide = ""; try { localStorage.removeItem(LS_GUIDE); } catch(e){} renderSheet(); });
+  $("L-grid").addEventListener("click", function(){
+    if (!LL().enabled) { $("L-msg").textContent = "Tick \"Use exact positioning\" first."; return; }
+    $("L-msg").textContent = "";
+    showBadge({name:SAMPLE.name, designation:SAMPLE.role, company:SAMPLE.org}, "test");
+    $("gridLayer").innerHTML = buildGrid(); document.body.classList.add("gridmode");
+    updateLayoutCss(); setTimeout(doPrint, 200);
+  });
+  if (!guide && location.protocol !== "file:") {
+    fetch("card-guide.jpg", {cache:"no-store"}).then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
+      var r = new FileReader(); r.onload = function(){ setGuide(r.result, 0); }; r.readAsDataURL(b);
+    }).catch(function(){});
+  }
+  window.addEventListener("beforeprint", updateLayoutCss);
+  window.addEventListener("afterprint", function(){ document.body.classList.remove("gridmode"); });
+  window.addEventListener("resize", renderSheet);
+  $("toolSettings").addEventListener("toggle", function(){ renderSheet(); });
+
+  // ---- Logo upload (shrunk so it fits in browser storage) ----
+  $("s-logo").addEventListener("change", function(){
+    var f = this.files && this.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      var im = new Image();
+      im.onerror = function(){ $("saveNote").textContent = "That image could not be read. Try a PNG or JPG."; };
+      im.onload = function(){
+        var iw = im.naturalWidth || 300, ih = im.naturalHeight || 150;
+        var s = Math.min(1, 600 / iw), c = document.createElement("canvas");
+        c.width = Math.round(iw * s); c.height = Math.round(ih * s);
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+        settings.logo = c.toDataURL("image/png");
+        saveSettings(); applySettings();
+      };
+      im.src = r.result;
+    };
+    r.readAsDataURL(f);
+  });
+  $("logoRemove").addEventListener("click", function(){
+    settings.logo = ""; $("s-logo").value = ""; saveSettings(); applySettings();
+  });
+  $("resetBtn").addEventListener("click", function(){
+    try { localStorage.removeItem(LS_SETTINGS); } catch(e){}
+    $("s-logo").value = ""; $("saveNote").textContent = ""; settings = buildSettings(); syncInputs(); applySettings();
+  });
+
+  // ---- Talking to Firebase (through API, defined in the module script above) ----
+  var pendingN = 0, walkinOnly = 0, onlineChecked = 0;
+  function refreshStatus(){
+    return API.status().then(function(d){
+      serverCount = d.count; walkins = d.walkins || 0; preTotal = d.preTotal || 0; preAttended = d.preAttended || 0;
+      onlineTotal = d.online || 0; walkinOnly = d.walkinOnly || 0; onlineChecked = d.onlineChecked || 0; pendingN = d.pending || 0; online = !d.offline; renderCount();
+    }).catch(function(){ online = false; renderCount(); });
+  }
+  function renderCount(){
+    $("csvBtn").textContent = "Download CSV (" + serverCount + ")";
+    $("lc-pre").textContent = preAttended;
+    $("lc-walk").textContent = walkinOnly;
+    $("lc-online").textContent = onlineChecked;
+    $("lc-total").textContent = preAttended + walkinOnly + onlineChecked;
+    $("preEmpty").hidden = !!(preTotal || onlineTotal);
+    $("preInfo").textContent = preTotal ? "Pre-registered list: " + preTotal + " people, " + preAttended + " checked in." : "No pre-registered list uploaded yet.";
+    var msg = !online ? "No internet. Registrations are kept on this device and upload by themselves when the internet is back. Keep this page open."
+      : (pendingN ? pendingN + " change(s) still uploading..." : "Connected. Everything is saved online.");
+    $("connNote").textContent = msg;
+    $("connNote").className = online ? "hint" : "err";
+  }
+
+  function setErr(id, msg){
+    $("e-" + id).textContent = msg || "";
+    var input = $(id); if (input) input.setAttribute("aria-invalid", msg ? "true" : "false");
+  }
+  function heardValue(){
+    var out = [];
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="heard"]:checked'), function(c){
+      if (c.value === "Other") { var t = $("heardOtherText").value.trim(); out.push(t ? "Other: " + t : "Other"); }
+      else out.push(c.value);
+    });
+    return out.join("; ");
+  }
+  $("heardOther").addEventListener("change", function(){ $("heardOtherText").hidden = !this.checked; if (this.checked) $("heardOtherText").focus(); });
+  function validate(v){
+    var ok = true, first = null;
+    function bad(f, m){ setErr(f, m); if (!first) first = f; ok = false; }
+    FIELDS.forEach(function(f){ setErr(f, ""); }); setErr("heard", "");
+    if (!v.name) bad("name", "Enter your full name.");
+    if (!v.email) bad("email", "Enter your email address.");
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) bad("email", "Enter a valid email, like name@company.com.");
+    if (v.phone && !/^[+\d][\d\s\-()]{5,}$/.test(v.phone)) bad("phone", "Enter a valid phone number, or leave it blank.");
+    if (!v.company) bad("company", "Enter your company name.");
+    if (!v.designation) bad("designation", "Enter your designation.");
+    if (!v.heard) bad("heard", "Please tick at least one option.");
+    else if ($("heardOther").checked && !$("heardOtherText").value.trim()) bad("heard", "Please enter where they heard about us.");
+    if (first) $(first).focus();
+    return ok;
+  }
+  function submit(){
+    $("e-form").textContent = "";
+    var v = {};
+    FIELDS.forEach(function(f){ v[f] = $(f).value.trim(); });
+    v.heard = heardValue();
+    if (!validate(v)) return;
+    var btn = $("submitBtn"); btn.disabled = true; btn.textContent = "Registering...";
+    API.register(v)
+      .then(function(res){
+        if (res.status === 200 && res.data.ok) {
+          refreshStatus();
+          showBadge(v, "registered");
+          if (settings.autoPrint) setTimeout(doPrint, 300);
+        } else if (res.data && res.data.field) {
+          setErr(res.data.field, res.data.error); $(res.data.field).focus();
+        } else {
+          $("e-form").textContent = (res.data && res.data.error) || "Could not save the registration. Please try again.";
+        }
+      })
+      .catch(function(){
+        $("e-form").textContent = "Could not save the registration. Check the internet connection and try again. Your details are still filled in.";
+      })
+      .then(function(){ btn.disabled = false; btn.textContent = "Register"; });
+  }
+
+  // ---- Badge, countdown, print ----
+  // mode: "registered" (signed up), "checkedin" (pre-registered), "quick" (typed badge, not saved), "test"
+  function isAuto(){ return badgeMode === "registered" || badgeMode === "checkedin"; }
+  function showBadge(v, mode, at){
+    badgeMode = mode || "registered";
+    var quick = badgeMode === "quick";
+    $("b-name").textContent = v.name || "";
+    $("b-role").textContent = v.designation || "";
+    $("b-org").textContent = v.company || "";
+    $("doneTitle").textContent = { registered: "You're registered.", checkedin: at ? "Already checked in." : "Checked in.", quick: "Quick badge.", test: "Test badge." }[badgeMode];
+    $("doneText").textContent = { registered: "Print your badge or collect it at the desk.",
+      checkedin: at ? "Checked in earlier at " + at + ". You can print the badge again." : "Print the badge below.",
+      quick: "Type the name, designation and company on the badge, then print. It is not added to the list.",
+      test: "This is only a test print." }[badgeMode];
+    $("editHint").hidden = quick;
+    $("nextBtn").textContent = badgeMode === "registered" ? "Register next visitor" : (badgeMode === "checkedin" ? "Next visitor" : "Back to form");
+    $("formView").hidden = true; $("doneView").hidden = false;
+    stopCountdown();
+    if (isAuto()) startCountdown();
+    if (quick) $("b-name").focus(); else $("printBtn").focus();
+  }
+  function backToForm(){
+    stopCountdown();
+    $("doneView").hidden = true; $("formView").hidden = false;
+  }
+  // Badge lines are editable: plain text only, Enter = done, and the auto-reset pauses while editing
+  ["b-name","b-role","b-org"].forEach(function(id){
+    var el = $(id);
+    el.addEventListener("focus", stopCountdown);
+    el.addEventListener("input", function(){ stopCountdown(); if (!el.textContent.trim()) el.textContent = ""; });
+    el.addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); el.blur(); } });
+    el.addEventListener("paste", function(e){
+      e.preventDefault();
+      var t = ((e.clipboardData || window.clipboardData).getData("text") || "").replace(/\s+/g, " ");
+      document.execCommand("insertText", false, t);
+    });
+  });
+  function startCountdown(){
+    stopCountdown();
+    var left = CONFIG.resetSeconds;
+    if (!left || left < 1) return;
+    $("countdown").textContent = "Form resets in " + left + "s";
+    timer = setInterval(function(){
+      left--;
+      if (left <= 0) { reset(); return; }
+      $("countdown").textContent = "Form resets in " + left + "s";
+    }, 1000);
+  }
+  function stopCountdown(){ clearInterval(timer); timer = null; $("countdown").textContent = ""; }
+  function doPrint(){ stopCountdown(); updateLayoutCss(); window.print(); }
+  window.addEventListener("afterprint", function(){
+    if (!$("doneView").hidden && isAuto()) startCountdown();
+  });
+  function reset(){
+    stopCountdown();
+    FIELDS.forEach(function(f){ $(f).value = ""; setErr(f, ""); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="heard"]'), function(c){ c.checked = false; });
+    $("heardOtherText").value = ""; $("heardOtherText").hidden = true; setErr("heard", "");
+    $("preName").value = ""; $("preCompany").value = ""; $("preResults").textContent = ""; $("preNote").textContent = "";
+    $("doneView").hidden = true; $("formView").hidden = false;
+    (PAGE === "preregistered" || (PAGE !== "register" && preTotal) ? $("preName") : $("name")).focus();
+  }
+
+  // ---- CSV export (the only way registrations are shown) ----
+  function downloadCsv(){
+    $("csvMsg").textContent = "";
+    API.exportCsv().then(function(blob){
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "visitors-" + new Date().toISOString().slice(0,10) + ".csv";
+      document.body.appendChild(a); a.click(); a.remove();
+    }).catch(function(){ $("csvMsg").textContent = "Could not download the CSV."; });
+  }
+
+  // ---- Pre-registered guests: search, check in, upload ----
+  var searchTimer = null, searchSeq = 0;
+  function onPreInput(){
+    clearTimeout(searchTimer);
+    var q = ($("preName").value + " " + $("preCompany").value).trim();
+    if (q.length < 2) { $("preResults").textContent = ""; $("preNote").textContent = q ? "Keep typing..." : ""; return; }
+    searchTimer = setTimeout(function(){ doSearch(q); }, 250);
+  }
+  $("preName").addEventListener("input", onPreInput);
+  $("preCompany").addEventListener("input", onPreInput);
+  function doSearch(q){
+    var seq = ++searchSeq;
+    API.search(q).then(function(d){
+      if (seq !== searchSeq) return;
+      var box = $("preResults"); box.textContent = "";
+      $("preNote").textContent = !d.total ? "No match. Check the spelling, or register as a new visitor on the Register page."
+        : (d.total > d.results.length ? "Showing " + d.results.length + " of " + d.total + ". Type more of the name to narrow it down." : "");
+      d.results.forEach(function(p){
+        var row = document.createElement("div"); row.className = "res";
+        var who = document.createElement("div"); who.className = "who";
+        var nm = document.createElement("strong"); nm.textContent = p.name;
+        var sub = document.createElement("span"); sub.textContent = [p.company, p.designation].filter(Boolean).join(" - ");
+        who.appendChild(nm); who.appendChild(sub);
+        var btn = document.createElement("button"); btn.type = "button";
+        btn.textContent = p.attended ? "Checked in - print again" : "Check in & print badge";
+        if (p.attended) btn.className = "again";
+        btn.addEventListener("click", function(){ checkIn(p.id, btn); });
+        row.appendChild(who); row.appendChild(btn); box.appendChild(row);
+      });
+    }).catch(function(){ $("preNote").textContent = "Could not search. Check the internet connection."; });
+  }
+  function checkIn(id, btn, errEl){
+    errEl = errEl || $("preNote");
+    btn.disabled = true;
+    API.checkin(id)
+      .then(function(res){
+        if (res.status === 200 && res.data.ok) {
+          refreshStatus(); if (PAGE === "online-desk") loadFeed();
+          showBadge(res.data.person, "checkedin", res.data.already ? res.data.at : "");
+          setTimeout(doPrint, 300);  // check in = print; cancel the print window to edit the badge first
+        } else { errEl.textContent = (res.data && res.data.error) || "Could not check in."; btn.disabled = false; }
+      })
+      .catch(function(){ errEl.textContent = "Could not check in. Check the internet connection and try again."; btn.disabled = false; });
+  }
+  // ---- Online registrations page: live list of people who registered on their phones ----
+  var feedSig = "", feedSeen = null;
+  function renderFeed(d){
+    var items = d.items || [], box = $("feedList");
+    $("feedCount").textContent = d.total ? d.total + " registered, " + d.waiting + " waiting for a badge" : "";
+    $("feedEmpty").hidden = !!items.length;
+    var sig = JSON.stringify(items);
+    if (sig === feedSig) return;
+    feedSig = sig; box.textContent = "";
+    var first = feedSeen === null;
+    items.forEach(function(p){
+      var isNew = !first && !feedSeen[p.id];
+      var row = document.createElement("div"); row.className = "res" + (isNew ? " new" : "");
+      var who = document.createElement("div"); who.className = "who";
+      var nm = document.createElement("strong"); nm.textContent = p.name;
+      var tag = document.createElement("span"); tag.className = "tag" + (p.checkedInAt ? "" : " wait"); tag.textContent = p.checkedInAt ? "Checked in" : "Waiting";
+      nm.appendChild(tag);
+      var sub = document.createElement("span"); sub.textContent = [p.company, p.designation].filter(Boolean).join(" - ");
+      var when = document.createElement("span"); when.className = "when";
+      when.textContent = [p.phone, p.email].filter(Boolean).join(" | ") + " | registered " + (p.registeredAt || "").slice(11, 16);
+      who.appendChild(nm); who.appendChild(sub); who.appendChild(when);
+      var btn = document.createElement("button"); btn.type = "button";
+      btn.textContent = p.checkedInAt ? "Checked in - print again" : "Check in & print badge";
+      if (p.checkedInAt) btn.className = "again";
+      btn.addEventListener("click", function(){ $("feedErr").textContent = ""; checkIn(p.id, btn, $("feedErr")); });
+      row.appendChild(who); row.appendChild(btn); box.appendChild(row);
+    });
+    feedSeen = {}; items.forEach(function(p){ feedSeen[p.id] = true; });
+  }
+  function loadFeed(){
+    return API.onlineFeed().then(function(d){ renderFeed(d); }).catch(function(){});
+  }
+  $("preUpload").addEventListener("click", function(){
+    var f = $("preFile").files[0], btn = this;
+    $("preErr").textContent = ""; $("preMsg").textContent = "";
+    if (!f) { $("preErr").textContent = "Choose an Excel (.xlsx) or CSV file first."; return; }
+    if (f.size > 10 * 1024 * 1024) { $("preErr").textContent = "That file is larger than 10 MB."; return; }
+    btn.disabled = true; $("preMsg").textContent = "Uploading...";
+    API.upload(f)
+      .then(function(res){
+        $("preMsg").textContent = "";
+        if (res.status === 200 && res.data.ok) {
+          $("preMsg").textContent = "Added " + res.data.added + " people." + (res.data.skipped ? " " + res.data.skipped + " already in the list were skipped." : "") + " The list now has " + res.data.total + ".";
+          $("preFile").value = ""; refreshStatus();
+        } else $("preErr").textContent = (res.data && res.data.error) || "Upload failed.";
+      })
+      .catch(function(){ $("preMsg").textContent = ""; $("preErr").textContent = "Upload failed. Check the internet connection."; })
+      .then(function(){ btn.disabled = false; });
+  });
+
+  $("submitBtn").addEventListener("click", submit);
+  $("printBtn").addEventListener("click", doPrint);
+  $("nextBtn").addEventListener("click", function(){ if (isAuto()) reset(); else backToForm(); });
+  $("quickBtn").addEventListener("click", function(){ showBadge({}, "quick"); });
+  $("csvBtn").addEventListener("click", downloadCsv);
+
+  // ---- Delete all registrations (two-step, so it can't happen by accident) ----
+  $("wipeBtn").addEventListener("click", function(){
+    $("wipeNote").textContent = "";
+    refreshStatus().then(function(){
+      if (!online) { $("wipeNote").textContent = "No internet connection."; return; }
+      if (!walkins && !preTotal) { $("wipeNote").textContent = "There is nothing to delete."; return; }
+      $("wipeMsg").textContent = "Delete " + walkins + " registrations (online and walk-in) and the pre-registered list (" + preTotal + " people, " + preAttended + " checked in) from Firebase, for every laptop? A CSV copy will download to this computer first.";
+      $("wipeAsk").hidden = true; $("wipeConfirm").hidden = false;
+    });
+  });
+  $("wipeNo").addEventListener("click", function(){
+    $("wipeConfirm").hidden = true; $("wipeAsk").hidden = false;
+  });
+  $("wipeYes").addEventListener("click", function(){
+    API.deleteAll()
+      .then(function(res){
+        $("wipeConfirm").hidden = true; $("wipeAsk").hidden = false;
+        if (res.status === 200 && res.data.ok) {
+          serverCount = walkins = preTotal = preAttended = onlineTotal = 0; renderCount(); $("preResults").textContent = ""; if (PAGE === "online-desk") loadFeed();
+          $("wipeNote").textContent = "Deleted " + res.data.deleted + " registrations and " + res.data.pre_deleted + " pre-registered people. A CSV copy was downloaded to this computer first.";
+        } else {
+          $("wipeNote").textContent = (res.data && res.data.error) || "Could not delete.";
+        }
+      })
+      .catch(function(){
+        $("wipeConfirm").hidden = true; $("wipeAsk").hidden = false;
+        $("wipeNote").textContent = "Could not delete. Check the internet connection.";
+      });
+  });
+  $("testBtn").addEventListener("click", function(){
+    showBadge({name:"Sample Visitor", designation:"Designation", company:"Company Name"}, "test");
+    setTimeout(doPrint, 200);
+  });
+  FIELDS.forEach(function(f){ $(f).addEventListener("keydown", function(e){ if (e.key === "Enter") submit(); }); });
+
+  try { if (window.top !== window.self) $("previewNote").hidden = false; } catch(e){ $("previewNote").hidden = false; }
+  if (location.protocol === "file:") $("serverNote").hidden = false;
+  applyPage(); applyLock(); syncInputs(); applySettings(); renderCount();
+  $("codeBtn").addEventListener("click", tryCode);
+  $("codeInput").addEventListener("keydown", function(e){ if (e.key === "Enter") tryCode(); });
+  refreshStatus();
+  API.onChange(function(){ refreshStatus(); if (PAGE === "online-desk" && $("doneView").hidden) loadFeed(); });
+  if (PAGE === "online-desk") loadFeed();
+})();
+</script>
+<script type="module">
+// Firebase settings come from config.js
+var ADMIN = String((window.PORTAL_CONFIG && window.PORTAL_CONFIG.adminEmail) || "").trim().toLowerCase();
+function isAdminNow(){ var u = auth.currentUser; return !!(u && u.email && u.email.toLowerCase() === ADMIN); }
+var firebaseConfig = (window.PORTAL_CONFIG && window.PORTAL_CONFIG.firebase) || { apiKey: "PASTE" };
+var gateErr = document.getElementById("gateErr");
+function gmsg(t){ gateErr.textContent = t || ""; }
+if (firebaseConfig.apiKey.indexOf("PASTE") === 0) { gmsg("The Firebase settings are not filled in yet. Open config.js in Notepad and paste your settings, then upload it to GitHub."); throw new Error("no config"); }
+var BASE = "https://www.gstatic.com/firebasejs/10.14.1/";
+var A, AU, F;
+try {
+  A = await import(BASE + "firebase-app.js");
+  AU = await import(BASE + "firebase-auth.js");
+  F = await import(BASE + "firebase-firestore.js");
+} catch (e) {
+  gmsg("Could not load Firebase. Check the internet connection and reload this page.");
+  throw e;
+}
+var app = A.initializeApp(firebaseConfig);
+var auth = AU.getAuth(app);
+var db;
+try {
+  db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) });
+} catch (e) { db = F.getFirestore(app); }
+
+// ---------- helpers ----------
+function p2(n){ return (n < 10 ? "0" : "") + n; }
+function fmt(d){ return d ? d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()) + " " + p2(d.getHours()) + ":" + p2(d.getMinutes()) + ":" + p2(d.getSeconds()) : ""; }
+function tsOf(v){ return v && typeof v.toDate === "function" ? v.toDate() : null; }
+function clean(v, n){ return String(v == null ? "" : v).replace(/[\x00-\x1f\x7f]/g, " ").replace(/\s+/g, " ").trim().slice(0, n || 200); }
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, PHONE_RE = /^[+\d][\d\s\-()]{5,}$/;
+function safeCell(v){ v = String(v == null ? "" : v); return /^[=+\-@\t\r]/.test(v) ? "'" + v : v; }
+function disp(v){ return /^'[=+\-@]/.test(v) ? v.slice(1) : v; }
+function csvLine(a){ return a.map(function(c){ c = String(c == null ? "" : c); return /[",\r\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(","); }
+function cyrb53(str){
+  var h1 = 0xdeadbeef, h2 = 0x41c6ce57, ch;
+  for (var i = 0; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+function withTimeout(p, ms){
+  return new Promise(function(res, rej){
+    var done = false, t = setTimeout(function(){ if (!done) { done = true; res("pending"); } }, ms);
+    p.then(function(v){ if (!done) { done = true; clearTimeout(t); res(v); } },
+           function(e){ if (!done) { done = true; clearTimeout(t); rej(e); } });
+  });
+}
+
+// ---------- live data from Firebase ----------
+var REG = new Map(), PRE = new Map(), regPend = 0, prePend = 0, listeners = [], notifyQueued = false;
+function norm(id, d, src){
+  return { id: id, name: d.name || "", email: d.email || "", phone: d.phone || "", company: d.company || "",
+           designation: d.designation || "", heard: d.heard || "", source: src || d.source || "Online",
+           createdAt: tsOf(d.createdAt), checkedAt: tsOf(d.checkedInAt) };
+}
+function notify(){
+  if (notifyQueued) return; notifyQueued = true;
+  setTimeout(function(){ notifyQueued = false; listeners.forEach(function(cb){ try { cb(); } catch (e) {} }); }, 50);
+}
+function watch(name, map, isReg){
+  return new Promise(function(res, rej){
+    var first = true;
+    F.onSnapshot(F.collection(db, name), { includeMetadataChanges: true }, function(snap){
+      map.clear(); var pend = 0;
+      snap.docs.forEach(function(d){
+        if (d.metadata.hasPendingWrites) pend++;
+        map.set(d.id, norm(d.id, d.data({ serverTimestamps: "estimate" }), isReg ? "" : "Pre-registered"));
+      });
+      if (isReg) regPend = pend; else prePend = pend;
+      if (first) { first = false; res(); }
+      notify();
+    }, function(err){
+      if (first) { first = false; rej(err); } else notify();
+    });
+  });
+}
+window.addEventListener("online", notify);
+window.addEventListener("offline", notify);
+
+// ---------- the functions the page uses ----------
+function reply(status, data){ return { status: status, data: data }; }
+function exportBlob(){
+  var rows = [];
+  REG.forEach(function(r){ rows.push([r.name, r.email, r.phone, r.company, r.designation, fmt(r.createdAt), r.source, fmt(r.checkedAt), r.heard]); });
+  PRE.forEach(function(p){ if (p.checkedAt) rows.push([p.name, p.email, p.phone, p.company, p.designation, fmt(p.checkedAt), "Pre-registered", "", ""]); });
+  rows.sort(function(a, b){ return a[5] < b[5] ? -1 : a[5] > b[5] ? 1 : 0; });
+  var out = [csvLine(["Name", "Email", "Phone", "Company", "Designation", "Registered / checked in at", "Type", "Checked in at", "How they heard about us"])];
+  rows.forEach(function(r){ out.push(csvLine(r.map(function(c, i){ return i === 2 ? c : safeCell(c); }))); });
+  return new Blob(["﻿" + out.join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" });
+}
+function saveBlob(blob, name){
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function hay(r){ return (r.name + " " + r.company + " " + r.email + " " + r.phone + " " + r.phone.replace(/\D/g, "")).toLowerCase(); }
+
+var ALIASES = {
+  name: ["name", "full name", "fullname", "visitor name", "attendee name", "participant", "participant name", "delegate", "delegate name"],
+  first: ["first name", "firstname", "given name", "forename"],
+  last: ["last name", "lastname", "surname", "family name"],
+  email: ["email", "e mail", "email address", "e mail address", "mail"],
+  phone: ["phone", "mobile", "mobile no", "mobile number", "phone number", "telephone", "tel", "contact", "contact number", "contact no", "whatsapp"],
+  company: ["company", "company name", "organization", "organisation", "organization name", "organisation name", "business", "firm", "institution"],
+  designation: ["designation", "title", "job title", "position", "role", "job"]
+};
+function normH(h){ return String(h).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+function parseCsv(text){
+  var first = text.split("\n", 1)[0], best = ",", bc = -1;
+  [",", ";", "\t"].forEach(function(d){ var c = first.split(d).length; if (c > bc) { bc = c; best = d; } });
+  var rows = [], row = [], cur = "", q = false;
+  for (var i = 0; i < text.length; i++) {
+    var ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === best) { row.push(cur); cur = ""; }
+    else if (ch === "\n") { row.push(cur); rows.push(row); row = []; cur = ""; }
+    else if (ch !== "\r") cur += ch;
+  }
+  if (cur || row.length) { row.push(cur); rows.push(row); }
+  return rows.map(function(r){ return r.map(function(c){ return c.trim(); }); });
+}
+function loadSheetJs(){
+  if (window.XLSX) return Promise.resolve();
+  return new Promise(function(res, rej){
+    var s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+    s.onload = res; s.onerror = function(){ rej(new Error("Could not load the Excel reader. Check the internet connection, or save the list as CSV and upload that.")); };
+    document.head.appendChild(s);
+  });
+}
+async function readTable(file){
+  var buf = new Uint8Array(await file.arrayBuffer());
+  if (buf[0] === 0x50 && buf[1] === 0x4b) {
+    await loadSheetJs();
+    var wb = XLSX.read(buf, { type: "array" });
+    var ws = wb.Sheets[wb.SheetNames[0]];
+    if (!ws) throw new Error("No sheet found in that Excel file.");
+    return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: "" }).map(function(r){
+      return r.map(function(c){ return typeof c === "number" ? String(c) : String(c == null ? "" : c).trim(); });
+    });
+  }
+  if (buf[0] === 0xd0 && buf[1] === 0xcf) throw new Error("Old .xls files are not supported. In Excel choose File > Save As > Excel Workbook (.xlsx) or CSV, then upload that.");
+  var text;
+  try { text = new TextDecoder("utf-8", { fatal: true }).decode(buf); } catch (e) { text = new TextDecoder("windows-1252").decode(buf); }
+  return parseCsv(text.replace(/^﻿/, ""));
+}
+function keyOf(r){ return r.email ? r.email.toLowerCase() : (r.name.toLowerCase() + "|" + r.company.toLowerCase()); }
+function preIdOf(r){ return r.email ? r.email.toLowerCase().replace(/\//g, "_") : "n_" + cyrb53(keyOf(r)); }
+
+var IMPL = {
+  status: function(){
+    var att = 0, onl = 0, onlIn = 0, walk = 0;
+    PRE.forEach(function(p){ if (p.checkedAt) att++; });
+    REG.forEach(function(r){ if (r.source === "Online") { onl++; if (r.checkedAt) onlIn++; } else walk++; });
+    return { count: REG.size + att, walkins: REG.size, walkinOnly: walk, preTotal: PRE.size, preAttended: att, online: onl, onlineChecked: onlIn,
+             pending: regPend + prePend, offline: !navigator.onLine };
+  },
+  onChange: function(cb){ listeners.push(cb); },
+
+  register: async function(v){
+    var name = clean(v.name), email = clean(v.email, 254), phone = clean(v.phone, 30), company = clean(v.company), designation = clean(v.designation);
+    if (!name) return reply(400, { error: "Enter your full name.", field: "name" });
+    if (!email) return reply(400, { error: "Enter your email address.", field: "email" });
+    if (!EMAIL_RE.test(email) || email.indexOf("/") > -1) return reply(400, { error: "Enter a valid email, like name@company.com.", field: "email" });
+    if (phone && !PHONE_RE.test(phone)) return reply(400, { error: "Enter a valid phone number, or leave it blank.", field: "phone" });
+    if (!company) return reply(400, { error: "Enter your company name.", field: "company" });
+    if (!designation) return reply(400, { error: "Enter your designation.", field: "designation" });
+    var id = email.toLowerCase();
+    var pre = PRE.get(id);
+    if (REG.has(id) || (pre && pre.checkedAt)) return reply(409, { error: "This email is already registered. Please check with the desk.", field: "email" });
+    if (pre) return reply(409, { error: "You are on the pre-registered list. Please use the Pre-registered check-in page.", field: "email" });
+    try {
+      var r = await withTimeout(F.setDoc(F.doc(db, "registrations", id), {
+        name: name, email: email, phone: phone, company: company, designation: designation, heard: clean(v.heard, 300),
+        source: "Walk-in", checkedInAt: null, createdAt: F.serverTimestamp() }), 6000);
+      return reply(200, { ok: true, pending: r === "pending" });
+    } catch (e) {
+      if (e && e.code === "permission-denied") {
+        try {
+          var s = await F.getDoc(F.doc(db, "registrations", id));
+          if (s.exists()) return reply(409, { error: "This email is already registered. Please check with the desk.", field: "email" });
+        } catch (e2) {}
+        return reply(403, { error: "This account is not allowed to save registrations. Sign out and sign in with the staff account." });
+      }
+      throw e;
+    }
+  },
+
+  checkin: async function(id){
+    var t = String(id).slice(0, 1), key = String(id).slice(2);
+    var map = t === "r" ? REG : PRE, col = t === "r" ? "registrations" : "prereg";
+    var p = map.get(key);
+    if (!p) return reply(404, { error: "That person was not found. Please search again." });
+    var person = { name: disp(p.name), company: disp(p.company), designation: disp(p.designation) };
+    if (p.checkedAt) return reply(200, { ok: true, already: true, at: fmt(p.checkedAt), person: person });
+    try {
+      var r = await withTimeout(F.updateDoc(F.doc(db, col, key), { checkedInAt: F.serverTimestamp() }), 6000);
+      return reply(200, { ok: true, already: false, at: fmt(new Date()), person: person, pending: r === "pending" });
+    } catch (e) {
+      if (e && e.code === "permission-denied") {
+        try {
+          var s = await F.getDoc(F.doc(db, col, key));
+          var at = s.exists() && tsOf(s.data().checkedInAt);
+          if (at) return reply(200, { ok: true, already: true, at: fmt(at), person: person });
+        } catch (e2) {}
+        return reply(403, { error: "This account is not allowed to check people in. Sign out and sign in with the staff account." });
+      }
+      throw e;
+    }
+  },
+
+  search: function(q){
+    var toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (toks.reduce(function(a, t){ return a + t.length; }, 0) < 2) return { results: [], total: 0 };
+    var hits = [];
+    PRE.forEach(function(p){
+      var h = hay(p);
+      if (toks.every(function(t){ return h.indexOf(t) > -1; }))
+        hits.push({ k: p.name.toLowerCase(), v: { id: "p:" + p.id, name: p.name, company: p.company, designation: p.designation, attended: !!p.checkedAt } });
+    });
+    REG.forEach(function(r){
+      if (r.source !== "Online") return;
+      var h = hay(r);
+      if (toks.every(function(t){ return h.indexOf(t) > -1; }))
+        hits.push({ k: r.name.toLowerCase(), v: { id: "r:" + r.id, name: disp(r.name), company: disp(r.company), designation: disp(r.designation), attended: !!r.checkedAt, type: "Online" } });
+    });
+    hits.sort(function(a, b){ return a.k < b.k ? -1 : a.k > b.k ? 1 : 0; });
+    return { results: hits.slice(0, 8).map(function(h){ return h.v; }), total: hits.length };
+  },
+
+  onlineFeed: function(){
+    var items = [];
+    REG.forEach(function(r){
+      if (r.source === "Online") items.push({ id: "r:" + r.id, name: disp(r.name), email: disp(r.email), phone: r.phone, company: disp(r.company),
+        designation: disp(r.designation), registeredAt: fmt(r.createdAt), checkedInAt: fmt(r.checkedAt), _t: r.createdAt ? r.createdAt.getTime() : 0 });
+    });
+    items.sort(function(a, b){ return b._t - a._t; });
+    return { items: items.slice(0, 300), total: items.length, waiting: items.filter(function(x){ return !x.checkedInAt; }).length };
+  },
+
+  exportCsv: function(){ return exportBlob(); },
+
+  upload: async function(file){
+    if (!navigator.onLine) return reply(400, { error: "Uploading the list needs the internet." });
+    var rows;
+    try { rows = await readTable(file); } catch (e) { return reply(400, { error: e.message }); }
+    var cols = {}, hdr = -1;
+    for (var i = 0; i < Math.min(10, rows.length); i++) {
+      var m = {};
+      rows[i].forEach(function(h, j){ Object.keys(ALIASES).forEach(function(k){ if (!(k in m) && ALIASES[k].indexOf(normH(h)) > -1) m[k] = j; }); });
+      if ("name" in m || ("first" in m && "last" in m)) { cols = m; hdr = i; break; }
+    }
+    if (hdr < 0) return reply(400, { error: "Could not find a Name column. The first row must have headings like: Name, Email, Phone, Company, Designation." });
+    var before = PRE.size;
+    var keys = new Set(); PRE.forEach(function(p){ keys.add(keyOf(p)); });
+    var add = [], skipped = 0;
+    for (var n = hdr + 1; n < rows.length; n++) {
+      var r = rows[n];
+      var g = function(k, len){ var j = cols[k]; return j !== undefined && j < r.length ? clean(r[j], len) : ""; };
+      var name = g("name") || (g("first") + " " + g("last")).trim();
+      if (!name) continue;
+      if (add.length + PRE.size >= 20000) break;
+      var row = { name: name, email: g("email", 254), phone: g("phone", 30), company: g("company"), designation: g("designation") };
+      var k = keyOf(row);
+      if (keys.has(k) || (row.email && REG.has(row.email.toLowerCase()))) { skipped++; continue; }
+      keys.add(k); add.push(row);
+    }
+    if (!add.length && !skipped) return reply(400, { error: "No people with a name were found in that file." });
+    for (var s = 0; s < add.length; s += 400) {
+      var b = F.writeBatch(db);
+      add.slice(s, s + 400).forEach(function(x){
+        b.set(F.doc(db, "prereg", preIdOf(x)), { name: x.name, email: x.email, phone: x.phone, company: x.company, designation: x.designation, checkedInAt: null });
+      });
+      try { await b.commit(); }
+      catch (e) { return reply(500, { error: "Upload stopped after " + s + " people (" + (e && e.code || "error") + "). Open this page again and upload the same file; people already added are skipped." }); }
+    }
+    return reply(200, { ok: true, added: add.length, skipped: skipped, total: before + add.length });
+  },
+
+  deleteAll: async function(){
+    if (!navigator.onLine) return reply(400, { error: "Deleting needs the internet." });
+    var n = REG.size, m = PRE.size;
+    if (n || m) saveBlob(exportBlob(), "backup-before-delete-" + fmt(new Date()).replace(/[ :]/g, "-") + ".csv");
+    var jobs = [];
+    REG.forEach(function(r){ jobs.push(["registrations", r.id]); });
+    PRE.forEach(function(p){ jobs.push(["prereg", p.id]); });
+    try {
+      for (var s = 0; s < jobs.length; s += 400) {
+        var b = F.writeBatch(db);
+        jobs.slice(s, s + 400).forEach(function(j){ b.delete(F.doc(db, j[0], j[1])); });
+        await b.commit();
+      }
+    } catch (e) { return reply(500, { error: "Delete stopped part-way (" + (e && e.code || "error") + "). Open the page and try again." }); }
+    return reply(200, { ok: true, deleted: n, pre_deleted: m });
+  }
+};
+
+// ---------- sign in ----------
+var loginBusy = false, ready = false;
+function authMsg(e){
+  var c = e && e.code || "";
+  if (c === "auth/invalid-credential" || c === "auth/wrong-password" || c === "auth/user-not-found" || c === "auth/invalid-email") return "Wrong email or password.";
+  if (c === "auth/too-many-requests") return "Too many attempts. Wait a few minutes and try again.";
+  if (c === "auth/network-request-failed") return "No internet connection.";
+  if (c === "auth/operation-not-allowed") return "Email/Password sign-in is switched off in Firebase (Authentication > Sign-in method).";
+  return "Could not sign in" + (c ? " (" + c + ")" : "") + ".";
+}
+document.getElementById("loginForm").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  if (loginBusy) return;
+  loginBusy = true; gmsg(""); var btn = document.getElementById("loginBtn"); btn.disabled = true; btn.textContent = "Signing in...";
+  AU.signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value.trim(), document.getElementById("loginPw").value)
+    .catch(function(e){ gmsg(authMsg(e)); })
+    .then(function(){ loginBusy = false; btn.disabled = false; btn.textContent = "Sign in"; });
+});
+AU.onAuthStateChanged(auth, function(user){
+  if (!user) {
+    document.body.classList.remove("authed"); document.body.classList.remove("is-admin");
+    try { localStorage.removeItem("portal_staff"); localStorage.removeItem("portal_admin"); sessionStorage.removeItem("portal_code_ok"); } catch (e) {}
+    return;
+  }
+  var isAdm = !!(ADMIN && user.email && user.email.toLowerCase() === ADMIN);
+  document.body.classList.toggle("is-admin", isAdm);
+  try { if (isAdm) localStorage.setItem("portal_admin", "1"); else localStorage.removeItem("portal_admin"); } catch (e) {}
+  if (window.__refreshLock) window.__refreshLock();
+  if (ready) return;
+  if (!document.body.classList.contains("authed")) gmsg("Loading data...");
+  Promise.all([watch("registrations", REG, true), watch("prereg", PRE, false)]).then(function(){
+    ready = true; gmsg("");
+    document.body.classList.add("authed");
+    try { localStorage.setItem("portal_staff", "1"); } catch (e) {}
+    if (ADMIN) ["exportCsv", "upload", "deleteAll"].forEach(function(n){
+      var f = IMPL[n];
+      IMPL[n] = function(){
+        if (!isAdminNow()) return n === "exportCsv" ? Promise.reject(new Error("admin only")) : Promise.resolve(reply(403, { error: "Only the admin can do this." }));
+        return f.apply(this, arguments);
+      };
+    });
+    window.__apiResolve(IMPL);
+  }).catch(function(e){
+    if (e && e.code === "permission-denied") { gmsg("This account is not allowed to use the staff pages. Sign in with the staff account."); AU.signOut(auth); }
+    else gmsg("Could not load the data (" + (e && e.code || e && e.message || "error") + "). Check the internet connection and reload.");
+  });
+});
+document.getElementById("signOut").addEventListener("click", async function(ev){
+  ev.preventDefault();
+  try { localStorage.removeItem("portal_staff"); localStorage.removeItem("portal_admin"); sessionStorage.removeItem("portal_code_ok"); } catch (e) {}
+  try { await AU.signOut(auth); await F.terminate(db); await F.clearIndexedDbPersistence(db); } catch (e) {}
+  location.href = location.pathname;
+});
+</script>
+
+<footer class="site-foot">&copy; <span id="yr">2026</span> Menul Kodisinghe. All rights reserved.</footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+<button id="themeBtn" type="button" aria-pressed="false">&#9790; Dark mode</button>
+<script>
+(function(){
+  var b = document.getElementById("themeBtn"), root = document.documentElement;
+  function show(){ var d = root.getAttribute("data-theme") === "dark"; b.setAttribute("aria-pressed", d ? "true" : "false"); b.innerHTML = d ? "&#9728; Light mode" : "&#9790; Dark mode"; }
+  b.addEventListener("click", function(){
+    var d = root.getAttribute("data-theme") === "dark";
+    if (d) root.removeAttribute("data-theme"); else root.setAttribute("data-theme", "dark");
+    try { localStorage.setItem("portal_theme", d ? "light" : "dark"); } catch (e) {}
+    show();
+  });
+  show();
+})();
+</script>
+</body>
+</html>
